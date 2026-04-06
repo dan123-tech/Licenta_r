@@ -6,14 +6,12 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { formatDate, formatCurrency } from '../utils/helpers';
 import { RENTAL_STATUSES } from '../utils/constants';
 import { ROUTES } from '../utils/constants';
-import { useAuth } from '../context/AuthContext';
 import './RentalDetailPage.css';
 
 const RentalDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [rental, setRental] = useState<Rental | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { user: currentUser } = useAuth();
 
   useEffect(() => {
     if (id) {

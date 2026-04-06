@@ -36,7 +36,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSuccess, onCancel 
   const [categories, setCategories] = useState<string[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
   const [models, setModels] = useState<string[]>([]);
-  const [loadingFilters, setLoadingFilters] = useState(false);
   
   // Dropdown visibility
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
@@ -90,7 +89,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSuccess, onCancel 
 
   const loadFilterSuggestions = async () => {
     try {
-      setLoadingFilters(true);
       const [cats, brs, mods] = await Promise.all([
         productService.getCategories(),
         productService.getBrands(),
@@ -104,8 +102,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSuccess, onCancel 
       setFilteredModels(mods);
     } catch (error) {
       console.error('Error loading filter suggestions:', error);
-    } finally {
-      setLoadingFilters(false);
     }
   };
 

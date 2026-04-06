@@ -304,7 +304,7 @@ const CreateRentalPage: React.FC = () => {
                         name="deliveryType"
                         value="PERSONAL_PICKUP"
                         checked={deliveryType === 'PERSONAL_PICKUP'}
-                        onChange={(e) => {
+                        onChange={() => {
                           setDeliveryType('PERSONAL_PICKUP');
                           setDeliveryAddress('');
                           setDeliveryPhone('');
@@ -325,7 +325,7 @@ const CreateRentalPage: React.FC = () => {
                         name="deliveryType"
                         value="DELIVERY"
                         checked={deliveryType === 'DELIVERY'}
-                        onChange={(e) => setDeliveryType('DELIVERY')}
+                        onChange={() => setDeliveryType('DELIVERY')}
                       />
                       <div className="delivery-option-content">
                         <span className="delivery-option-icon">🚚</span>

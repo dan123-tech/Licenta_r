@@ -4,8 +4,6 @@ import { ProtectedRoute } from './components/common/ProtectedRoute';
 import Layout from './components/common/Layout';
 import { ROUTES } from './utils/constants';
 
-// Pages (we'll create these next)
-import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProductsPage from './pages/ProductsPage';
