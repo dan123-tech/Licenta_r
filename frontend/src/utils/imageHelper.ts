@@ -15,16 +15,22 @@ export const getImageUrl = (imageUrl: string | undefined | null): string => {
     return imageUrl;
   }
 
+  const backendOrigin = (): string => {
+    const api = import.meta.env.VITE_API_URL;
+    if (!api || api.startsWith('/')) {
+      return typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8081';
+    }
+    return api.replace(/\/api\/v1\/?$/, '');
+  };
+
   // If it's a local path (starts with /images/), convert to full URL
   if (imageUrl.startsWith('/images/')) {
-    const baseUrl = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:8081';
-    return baseUrl + imageUrl;
+    return backendOrigin() + imageUrl;
   }
 
   // If it's just a filename, assume it's in /images/
   if (!imageUrl.includes('/') && !imageUrl.includes(':')) {
-    const baseUrl = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:8081';
-    return `${baseUrl}/images/${imageUrl}`;
+    return `${backendOrigin()}/images/${imageUrl}`;
   }
 
   // Return as is for any other format
