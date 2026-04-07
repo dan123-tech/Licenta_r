@@ -132,6 +132,11 @@ export interface Rental {
   estimatedDeliveryDate?: string;
   actualDeliveryDate?: string;
   pickupDate?: string;
+  returnRequested?: boolean;
+  flaggedForReview?: boolean;
+  aiComparisonScore?: number;
+  aiPredictedCondition?: string;
+  aiLastRunAt?: string;
 }
 
 export interface RentalRequest {
@@ -148,6 +153,50 @@ export interface RentalRequest {
 export interface ConditionCheckRequest {
   condition: ItemCondition;
   notes?: string;
+}
+
+export interface ReviewReturnDecisionRequest {
+  condition: ItemCondition;
+  notes?: string;
+  markCompleted: boolean;
+}
+
+export interface RentalPhotoUploadResponse {
+  success: boolean;
+  message: string;
+  imageUrl: string;
+}
+
+export interface RentalImage {
+  id: number;
+  imageUrl: string;
+  createdAt: string;
+  uploadedBy: string;
+}
+
+export interface RentalAiComparison {
+  id: number;
+  score?: number;
+  predictedCondition?: string;
+  needsReview: boolean;
+  status: string;
+  message?: string;
+  createdAt: string;
+  triggeredBy: string;
+}
+
+export interface RentalReturnWorkflow {
+  minRequiredReturnPhotos: number;
+  baselinePhotoCount: number;
+  returnPhotoCount: number;
+  returnRequested: boolean;
+  flaggedForReview: boolean;
+  aiComparisonScore?: number;
+  aiPredictedCondition?: string;
+  aiLastRunAt?: string;
+  baselinePhotos: RentalImage[];
+  returnPhotos: RentalImage[];
+  latestComparison?: RentalAiComparison;
 }
 
 // Payment Types
@@ -190,14 +239,44 @@ export interface SuperOwnerStatistics {
 }
 
 // Auth Context Types
+export interface UserProfile {
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  postalCode?: string;
+  country?: string;
+  phone?: string;
+  billingFullName?: string;
+}
+
+export interface ProfilePatchPayload {
+  firstName?: string;
+  lastName?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  postalCode?: string;
+  country?: string;
+  phone?: string;
+  billingFullName?: string;
+}
+
 export interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<JwtResponse>;
   register: (data: RegisterRequest) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
   isAdmin: boolean;
   isSuperOwner: boolean;
+  /** ROLE_ADMIN fără SuperOwner — poate gestiona doar produse în catalog */
+  isVendorAdminOnly: boolean;
+  /** Admin, SuperOwner sau Vendor înregistrat — acces la pagina de produse */
+  canEditCatalog: boolean;
   isLoading: boolean;
 }

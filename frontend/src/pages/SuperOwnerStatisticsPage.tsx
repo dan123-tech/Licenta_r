@@ -84,7 +84,13 @@ const SuperOwnerStatisticsPage: React.FC = () => {
                   <td>{product.rentalCount}</td>
                   <td>{formatCurrency(product.income)}</td>
                   <td>{formatCurrency(product.expenses)}</td>
-                  <td>{formatCurrency(product.netProfit)}</td>
+                  <td
+                    className={
+                      product.netProfit >= 0 ? 'stats-profit stats-profit--pos' : 'stats-profit stats-profit--neg'
+                    }
+                  >
+                    {formatCurrency(product.netProfit)}
+                  </td>
                 </tr>
               ))}
             </tbody>

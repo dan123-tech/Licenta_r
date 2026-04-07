@@ -12,10 +12,11 @@ import org.springframework.stereotype.Component;
 public class AppProperties {
 
     private final Jwt jwt = new Jwt();
-    private String frontendOrigin = "http://localhost:3000";
+    private String frontendOrigin = "http://localhost:3001";
     private String uploadsDir = "uploads";
     private boolean emailConfirmationRequired = false;
     private final Stripe stripe = new Stripe();
+    private final Ai ai = new Ai();
 
     @Getter
     @Setter
@@ -28,5 +29,14 @@ public class AppProperties {
     @Setter
     public static class Stripe {
         private String secretKey = "";
+    }
+
+    @Getter
+    @Setter
+    public static class Ai {
+        private String compareUrl = "";
+        private int connectTimeoutMs = 4000;
+        private int readTimeoutMs = 12000;
+        private double reviewThreshold = 0.4;
     }
 }

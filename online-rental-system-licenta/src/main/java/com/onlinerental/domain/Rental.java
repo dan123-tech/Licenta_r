@@ -107,6 +107,29 @@ public class Rental {
     @Column(name = "stripe_payment_intent_id", length = 255)
     private String stripePaymentIntentId;
 
+    @Column(name = "return_requested", nullable = false)
+    @Builder.Default
+    private boolean returnRequested = false;
+
+    @Column(name = "return_requested_at")
+    private Instant returnRequestedAt;
+
+    @Column(name = "return_requested_by")
+    private Long returnRequestedBy;
+
+    @Column(name = "flagged_for_review", nullable = false)
+    @Builder.Default
+    private boolean flaggedForReview = false;
+
+    @Column(name = "ai_comparison_score", precision = 6, scale = 3)
+    private BigDecimal aiComparisonScore;
+
+    @Column(name = "ai_predicted_condition", length = 64)
+    private String aiPredictedCondition;
+
+    @Column(name = "ai_last_run_at")
+    private Instant aiLastRunAt;
+
     @Column(name = "created_at", nullable = false)
     @Builder.Default
     private Instant createdAt = Instant.now();

@@ -1,19 +1,25 @@
 @import './styles/variables.css';
 
-* {
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  font-family: var(--font-family);
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--bg-secondary);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
   color: var(--text-primary);
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  background-color: var(--bg-canvas);
+  overflow-x: hidden;
   width: 100%;
   max-width: 100vw;
 }
@@ -21,6 +27,11 @@ body {
 #root {
   width: 100%;
   min-height: 100vh;
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  overflow-x: hidden;
   max-width: 100vw;
+}
+
+::selection {
+  background: rgba(29, 53, 87, 0.14);
+  color: var(--c1);
 }

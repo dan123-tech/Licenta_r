@@ -23,10 +23,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         var authorities = user.getRoles().stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
+        // Spring's `enabled` must not mirror email verification — unverified users would get
+        // DisabledException and appear as "cannot log in". Verification is enforced in AuthService.login.
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                user.isVerified(),
+                true,
                 true,
                 true,
                 true,

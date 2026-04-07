@@ -1,5 +1,5 @@
 .rental-detail-page {
-  min-height: calc(100vh - 200px);
+  min-height: calc(100vh - var(--header-stack-h, 112px));
   padding: var(--spacing-2xl) 0;
   position: relative;
 }
@@ -12,8 +12,8 @@
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+    radial-gradient(circle at 25% 25%, rgba(29, 53, 87, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 75% 75%, rgba(42, 157, 143, 0.08) 0%, transparent 40%);
   z-index: 0;
   pointer-events: none;
 }
@@ -25,7 +25,7 @@
   padding: var(--spacing-2xl);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(29, 53, 87, 0.2);
   max-width: 900px;
   margin: 0 auto;
   position: relative;
@@ -107,7 +107,7 @@
 }
 
 .awb-row {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(29, 53, 87, 0.1) 0%, rgba(42, 157, 143, 0.1) 100%);
   border-left-color: var(--primary);
 }
 
@@ -121,22 +121,22 @@
 
 .status-pending {
   background: rgba(251, 191, 36, 0.1);
-  color: #d97706;
+  color: var(--warning);
 }
 
 .status-in-transit {
   background: rgba(59, 130, 246, 0.1);
-  color: #2563eb;
+  color: var(--info);
 }
 
 .status-delivered {
   background: rgba(16, 185, 129, 0.1);
-  color: #059669;
+  color: var(--success);
 }
 
 .status-returned {
-  background: rgba(139, 92, 246, 0.1);
-  color: #7c3aed;
+  background: rgba(42, 157, 143, 0.1);
+  color: var(--secondary);
 }
 
 @media (max-width: 768px) {

@@ -23,6 +23,6 @@
 .form-hint {
   display: block;
   margin-top: 0.5rem;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.875rem;
 }

@@ -1,34 +1,76 @@
 .help-page {
   padding: var(--spacing-2xl) 0;
+  position: relative;
+}
+
+.help-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 20%, var(--overlay-blob-primary) 0%, transparent 45%),
+    radial-gradient(circle at 80% 80%, var(--overlay-blob-secondary) 0%, transparent 45%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.help-page .container {
+  position: relative;
+  z-index: 1;
 }
 
 .help-hero {
-  background: linear-gradient(135deg, #ffffff, #f8fafc);
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass-subtle);
   border-radius: var(--border-radius-lg);
-  padding: var(--spacing-xl);
+  padding: var(--spacing-2xl);
   margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.help-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
 }
 
 .help-hero h1 {
   margin: 0 0 var(--spacing-sm);
+  background: var(--gradient-heading);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+  font-size: clamp(1.75rem, 4vw, var(--font-size-3xl));
 }
 
 .help-hero p {
   margin: 0;
   color: var(--text-secondary);
+  font-size: var(--font-size-base);
 }
 
 .help-section {
-  background: #fff;
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: var(--surface-glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-glass-subtle);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-xl);
   margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow);
 }
 
 .help-section h2 {
   margin: 0 0 var(--spacing-md);
+  color: var(--text-primary);
+  font-size: var(--font-size-xl);
 }
 
 .help-cards {
@@ -38,20 +80,30 @@
 }
 
 .help-card {
-  background: #f8fafc;
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: linear-gradient(180deg, var(--gray-50) 0%, var(--bg-primary) 100%);
+  border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   padding: var(--spacing-md);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.help-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-glass-subtle);
 }
 
 .help-card h3 {
   margin: 0 0 var(--spacing-xs);
   font-size: var(--font-size-base);
+  color: var(--primary);
+  font-weight: 700;
 }
 
 .help-card p {
   margin: 0;
   color: var(--text-secondary);
+  font-size: var(--font-size-sm);
 }
 
 .help-list {

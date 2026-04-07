@@ -21,7 +21,7 @@ const AdminProductsPage: React.FC = () => {
 
   useEffect(() => {
     loadProducts();
-  }, []);
+  }, [isSuperOwner]);
 
   const loadProducts = async () => {
     try {

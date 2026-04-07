@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { rentalService } from '../services/rentalService';
-import { Rental, RentalStatus, ItemCondition, ConditionCheckRequest } from '../types';
+import { Rental, RentalStatus, ItemCondition, ReviewReturnDecisionRequest, RentalReturnWorkflow } from '../types';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { formatDate, formatCurrency } from '../utils/helpers';
 import { RENTAL_STATUSES } from '../utils/constants';
@@ -14,8 +14,11 @@ const AdminRentalsPage: React.FC = () => {
   const [updatingStatus, setUpdatingStatus] = useState<number | null>(null);
   const [checkingCondition, setCheckingCondition] = useState<number | null>(null);
   const [conditionModal, setConditionModal] = useState<Rental | null>(null);
+  const [conditionWorkflow, setConditionWorkflow] = useState<RentalReturnWorkflow | null>(null);
   const [conditionNotes, setConditionNotes] = useState('');
   const [generatingAwb, setGeneratingAwb] = useState<number | null>(null);
+  const [runningAi, setRunningAi] = useState<number | null>(null);
+  const [markCompleted, setMarkCompleted] = useState(true);
 
   useEffect(() => {
     loadRentals();
@@ -64,6 +67,15 @@ const AdminRentalsPage: React.FC = () => {
   const handleCheckCondition = (rental: Rental) => {
     setConditionModal(rental);
     setConditionNotes('');
+    setMarkCompleted(true);
+    void (async () => {
+      try {
+        const wf = await rentalService.getReturnWorkflow(rental.id);
+        setConditionWorkflow(wf);
+      } catch {
+        setConditionWorkflow(null);
+      }
+    })();
   };
 
   const confirmConditionCheck = async (condition: ItemCondition) => {
@@ -71,19 +83,34 @@ const AdminRentalsPage: React.FC = () => {
 
     try {
       setCheckingCondition(conditionModal.id);
-      const request: ConditionCheckRequest = {
+      const request: ReviewReturnDecisionRequest = {
         condition,
         notes: conditionNotes.trim() || undefined,
+        markCompleted,
       };
-      await rentalService.checkItemCondition(conditionModal.id, request);
+      await rentalService.reviewReturnDecision(conditionModal.id, request);
       await loadRentals();
       setConditionModal(null);
+      setConditionWorkflow(null);
       setConditionNotes('');
-      alert('Starea produsului a fost verificată și depozitul a fost procesat!');
+      alert('Decizia pentru retur a fost salvată.');
     } catch (error: any) {
       alert(error.response?.data?.message || 'Eroare la verificarea stării produsului');
     } finally {
       setCheckingCondition(null);
+    }
+  };
+
+  const handleRunAi = async (rentalId: number) => {
+    try {
+      setRunningAi(rentalId);
+      const resp = await rentalService.runAiComparison(rentalId);
+      alert(resp.message || 'Compararea AI a fost rulată.');
+      await loadRentals();
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Nu s-a putut rula comparația AI.');
+    } finally {
+      setRunningAi(null);
     }
   };
 
@@ -148,8 +175,8 @@ const AdminRentalsPage: React.FC = () => {
                 <th>Preț Total</th>
                 <th>Depozit</th>
                 <th>Status</th>
-                <th>Livrare</th>
                 <th>Stare Produs</th>
+                <th>Livrare</th>
                 <th>Acțiuni</th>
               </tr>
             </thead>
@@ -204,32 +231,44 @@ const AdminRentalsPage: React.FC = () => {
                     </select>
                   </td>
                   <td>
-                    {rental.status === 'RETURNED' && rental.itemCondition === 'PENDING_CHECK' ? (
+                    {(rental.returnRequested || (rental.status === 'RETURNED' && rental.itemCondition === 'PENDING_CHECK')) ? (
                       <button
                         className="btn btn-primary btn-sm"
                         onClick={() => handleCheckCondition(rental)}
                         disabled={checkingCondition === rental.id}
                       >
-                        Verifică Stare
+                        Decizie retur
                       </button>
                     ) : (
-                      <span style={{ 
-                        fontSize: '0.875rem',
-                        padding: '0.25rem 0.5rem',
-                        borderRadius: '0.25rem',
-                        backgroundColor: rental.itemCondition === 'GOOD' 
-                          ? 'var(--success-light)' 
-                          : rental.itemCondition === 'DAMAGED'
-                          ? 'var(--error-light)'
-                          : 'var(--bg-tertiary)',
-                        color: rental.itemCondition === 'GOOD'
-                          ? '#065f46'
-                          : rental.itemCondition === 'DAMAGED'
-                          ? '#991b1b'
-                          : 'var(--text-secondary)'
-                      }}>
-                        {getConditionLabel(rental.itemCondition)}
-                      </span>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                        <span style={{ 
+                          fontSize: '0.875rem',
+                          padding: '0.25rem 0.5rem',
+                          borderRadius: '0.25rem',
+                          backgroundColor: rental.itemCondition === 'GOOD' 
+                            ? 'var(--success-light)' 
+                            : rental.itemCondition === 'DAMAGED'
+                            ? 'var(--error-light)'
+                            : 'var(--bg-tertiary)',
+                          color: rental.itemCondition === 'GOOD'
+                            ? '#065f46'
+                            : rental.itemCondition === 'DAMAGED'
+                            ? '#991b1b'
+                            : 'var(--text-secondary)'
+                        }}>
+                          {getConditionLabel(rental.itemCondition)}
+                        </span>
+                        {rental.flaggedForReview && (
+                          <span style={{ fontSize: '0.75rem', color: 'var(--error)', fontWeight: 700 }}>
+                            ⚠ Marcat pentru review AI
+                          </span>
+                        )}
+                        {typeof rental.aiComparisonScore === 'number' && (
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                            Score AI: {rental.aiComparisonScore.toFixed(3)}
+                          </span>
+                        )}
+                      </div>
                     )}
                   </td>
                   <td>
@@ -241,7 +280,7 @@ const AdminRentalsPage: React.FC = () => {
                           padding: '0.25rem 0.5rem',
                           borderRadius: '0.25rem',
                           backgroundColor: rental.deliveryType === 'DELIVERY' 
-                            ? 'rgba(99, 102, 241, 0.1)' 
+                            ? 'rgba(29, 53, 87, 0.1)' 
                             : 'rgba(107, 114, 128, 0.1)',
                           color: rental.deliveryType === 'DELIVERY'
                             ? 'var(--primary)'
@@ -314,6 +353,15 @@ const AdminRentalsPage: React.FC = () => {
                   </td>
                   <td>
                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      {rental.returnRequested && (
+                        <button
+                          className="btn btn-secondary btn-sm"
+                          onClick={() => handleRunAi(rental.id)}
+                          disabled={runningAi === rental.id}
+                        >
+                          {runningAi === rental.id ? 'Rulez AI...' : 'Rulează AI'}
+                        </button>
+                      )}
                       <button 
                         className="btn btn-danger btn-sm" 
                         onClick={() => handleDeleteRental(rental)}
@@ -347,15 +395,41 @@ const AdminRentalsPage: React.FC = () => {
       )}
 
       {conditionModal && (
-        <div className="condition-check-modal-overlay" onClick={() => setConditionModal(null)}>
+        <div
+          className="condition-check-modal-overlay"
+          onClick={() => {
+            setConditionModal(null);
+            setConditionWorkflow(null);
+          }}
+        >
           <div className="condition-check-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>Verificare Stare Produs</h2>
-              <button className="close-btn" onClick={() => setConditionModal(null)}>×</button>
+              <button
+                className="close-btn"
+                onClick={() => {
+                  setConditionModal(null);
+                  setConditionWorkflow(null);
+                }}
+              >
+                ×
+              </button>
             </div>
             <div className="modal-body">
               <p><strong>Produs:</strong> {conditionModal.inventoryUnit?.product?.name}</p>
               <p><strong>Depozit:</strong> {formatCurrency(conditionModal.depositAmount)}</p>
+              {conditionWorkflow && (
+                <p>
+                  <strong>AI:</strong>{' '}
+                  {conditionWorkflow.latestComparison
+                    ? `${conditionWorkflow.latestComparison.status}${
+                        conditionWorkflow.latestComparison.score !== undefined
+                          ? ` · score ${conditionWorkflow.latestComparison.score.toFixed(3)}`
+                          : ''
+                      }`
+                    : 'Nu există rulare AI încă.'}
+                </p>
+              )}
               <p style={{ marginBottom: '1.5rem' }}>
                 <strong>Notă:</strong> Dacă produsul este în stare bună, depozitul va fi returnat. 
                 Dacă este deteriorat, depozitul va fi reținut.
@@ -390,6 +464,16 @@ const AdminRentalsPage: React.FC = () => {
                   onChange={(e) => setConditionNotes(e.target.value)}
                   placeholder="Descrieți starea produsului sau eventuale daune..."
                 />
+              </div>
+              <div className="form-group">
+                <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <input
+                    type="checkbox"
+                    checked={markCompleted}
+                    onChange={(e) => setMarkCompleted(e.target.checked)}
+                  />
+                  <span>Marchează închirierea direct ca finalizată (COMPLETED)</span>
+                </label>
               </div>
             </div>
           </div>

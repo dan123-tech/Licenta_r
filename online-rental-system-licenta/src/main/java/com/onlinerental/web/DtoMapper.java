@@ -80,7 +80,12 @@ public final class DtoMapper {
                 r.getDeliveryStatus() != null ? r.getDeliveryStatus().name() : null,
                 r.getEstimatedDeliveryDate(),
                 r.getActualDeliveryDate(),
-                r.getPickupDate()
+                r.getPickupDate(),
+                r.isReturnRequested(),
+                r.isFlaggedForReview(),
+                r.getAiComparisonScore(),
+                r.getAiPredictedCondition(),
+                r.getAiLastRunAt()
         );
     }
 }

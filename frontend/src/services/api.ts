@@ -36,12 +36,22 @@ api.interceptors.response.use(
       const requestUrl = String(error.config?.url || '');
       const requestMethod = String(error.config?.method || 'get').toLowerCase();
 
+      const path = requestUrl.replace(/^\/+/, '').split('?')[0];
       const isPublicProductRead =
         requestMethod === 'get' &&
-        (/^\/products(\/.*)?$/.test(requestUrl) || /^\/products\/\d+\/reviews(\/summary)?$/.test(requestUrl));
+        (path === 'products' ||
+          path.startsWith('products/filters/') ||
+          /^products\/\d+(\/|$)/.test(path));
+
+      // Failed login/register must not clear storage or force redirect — user stays on the form.
+      const isAuthAttempt =
+        path === 'auth/login' ||
+        path === 'auth/register' ||
+        requestUrl.includes('/auth/login') ||
+        requestUrl.includes('/auth/register');
 
       // Keep user logged in for public catalog requests even if backend returns 401 unexpectedly.
-      if (!isPublicProductRead) {
+      if (!isPublicProductRead && !isAuthAttempt) {
         localStorage.removeItem(STORAGE_KEYS.TOKEN);
         localStorage.removeItem(STORAGE_KEYS.USER);
         window.location.href = '/login';

@@ -178,10 +178,13 @@ public class ProductService {
     }
 
     public void assertCanManageProduct(User actor, Product p) {
-        boolean admin = actor.getRoles().contains("ROLE_ADMIN") || actor.getRoles().contains("ROLE_SUPEROWNER");
-        boolean owner = p.getOwner().getId().equals(actor.getId());
-        if (!admin && !owner) {
-            throw new IllegalStateException("Nu aveți drepturi pentru acest produs");
+        boolean superOrAdmin =
+                actor.getRoles().contains("ROLE_ADMIN") || actor.getRoles().contains("ROLE_SUPEROWNER");
+        boolean vendorOwner =
+                actor.getRoles().contains("ROLE_VENDOR") && p.getOwner() != null
+                        && p.getOwner().getId().equals(actor.getId());
+        if (!superOrAdmin && !vendorOwner) {
+            throw new IllegalStateException("Nu poți modifica acest produs.");
         }
     }
 

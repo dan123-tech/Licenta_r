@@ -19,10 +19,20 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await login(username, password);
-      navigate(ROUTES.PRODUCTS);
+      const jwt = await login(username, password);
+      const role = jwt.role;
+      if (role === 'ROLE_SUPEROWNER') {
+        navigate(ROUTES.ADMIN, { replace: true });
+      } else if (role === 'ROLE_ADMIN' || role === 'ROLE_VENDOR') {
+        navigate(ROUTES.ADMIN_PRODUCTS, { replace: true });
+      } else {
+        navigate(ROUTES.PRODUCTS, { replace: true });
+      }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Eroare la autentificare');
+      const msg =
+        err.response?.data?.message ||
+        (typeof err.response?.data === 'string' ? err.response.data : null);
+      setError(msg || 'Eroare la autentificare');
     } finally {
       setIsLoading(false);
     }
@@ -32,9 +42,21 @@ const LoginPage: React.FC = () => {
     <div className="login-page">
       <div className="login-container">
         <div className="auth-header">
+          <div className="auth-logo" aria-hidden>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 12V22H4V12" />
+              <path d="M22 7H2v5h20V7z" />
+              <path d="M12 22V7" />
+              <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+              <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+            </svg>
+          </div>
           <p className="auth-kicker">Bine ai revenit</p>
           <h2>Autentificare</h2>
-          <p className="auth-subtitle">Conecteaza-te pentru a continua catre catalogul de produse.</p>
+          <p className="auth-subtitle">
+            Catalogul este vizibil și fără cont. Autentifică-te pentru închirieri, plăți și zona ta
+            personală.
+          </p>
         </div>
         <form onSubmit={handleSubmit} className="login-form">
           {error && <div className="form-error">{error}</div>}

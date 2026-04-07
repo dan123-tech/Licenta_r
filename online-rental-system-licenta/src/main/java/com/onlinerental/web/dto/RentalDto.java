@@ -30,6 +30,11 @@ public record RentalDto(
         String deliveryStatus,
         LocalDate estimatedDeliveryDate,
         LocalDate actualDeliveryDate,
-        LocalDate pickupDate
+        LocalDate pickupDate,
+        boolean returnRequested,
+        boolean flaggedForReview,
+        BigDecimal aiComparisonScore,
+        String aiPredictedCondition,
+        Instant aiLastRunAt
 ) {
 }

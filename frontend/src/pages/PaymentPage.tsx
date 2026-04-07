@@ -15,8 +15,12 @@ import { formatCurrency } from '../utils/helpers';
 import { STRIPE_PUBLISHABLE_KEY, ROUTES } from '../utils/constants';
 import './PaymentPage.css';
 
-// Initialize Stripe
-const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
+/** Avoid loadStripe('') — it throws and breaks the whole app (including login) when the key is missing. */
+function getStripePromise() {
+  const key = STRIPE_PUBLISHABLE_KEY?.trim();
+  if (!key) return null;
+  return loadStripe(key);
+}
 
 // Payment Form Component
 const PaymentForm: React.FC<{ rentalId: number; amount: number; clientSecret: string }> = ({ 
@@ -207,6 +211,8 @@ const PaymentPage: React.FC = () => {
     ? parseFloat(searchParams.get('amount')!) 
     : rental.totalPrice;
 
+  const stripePromise = getStripePromise();
+
   return (
     <div className="payment-page">
       <div className="container">
@@ -214,31 +220,40 @@ const PaymentPage: React.FC = () => {
         
         <div className="payment-info">
           <h2>Detalii Rezervare</h2>
-          <div className="info-row">
+          <div className="info-row-pay">
             <span>Produs:</span>
             <strong>{rental.inventoryUnit?.product?.name || 'N/A'}</strong>
           </div>
-          <div className="info-row">
+          <div className="info-row-pay">
             <span>Perioadă:</span>
             <strong>
               {new Date(rental.startDate).toLocaleDateString('ro-RO')} - {new Date(rental.endDate).toLocaleDateString('ro-RO')}
             </strong>
           </div>
-          <div className="info-row">
+          <div className="info-row-pay">
             <span>Suma totală:</span>
             <strong>{formatCurrency(rental.totalPrice)}</strong>
           </div>
         </div>
 
-        <div className="payment-container">
-          <Elements stripe={stripePromise} options={{ clientSecret }}>
-            <PaymentForm 
-              rentalId={rental.id} 
-              amount={amount} 
-              clientSecret={clientSecret} 
-            />
-          </Elements>
-        </div>
+        {!stripePromise ? (
+          <div className="payment-stripe-missing message error" role="alert">
+            <p>
+              Plata cu cardul nu este disponibilă: lipsește cheia publică Stripe. Adaugă{' '}
+              <code>VITE_STRIPE_PUBLISHABLE_KEY</code> în <code>.env</code> (sau în build-ul Docker) și reconstruiește frontend-ul.
+            </p>
+          </div>
+        ) : (
+          <div className="payment-container">
+            <Elements stripe={stripePromise} options={{ clientSecret }}>
+              <PaymentForm 
+                rentalId={rental.id} 
+                amount={amount} 
+                clientSecret={clientSecret} 
+              />
+            </Elements>
+          </div>
+        )}
       </div>
     </div>
   );

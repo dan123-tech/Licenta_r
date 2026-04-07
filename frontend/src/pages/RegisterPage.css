@@ -1,11 +1,11 @@
 .register-page {
-  min-height: calc(100vh - 200px);
+  min-height: calc(100vh - var(--header-stack-h, 112px));
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--spacing-xl);
   background: 
-    linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(139, 92, 246, 0.9) 50%, rgba(236, 72, 153, 0.9) 100%),
+    linear-gradient(135deg, rgba(29, 53, 87, 0.9) 0%, rgba(42, 157, 143, 0.9) 50%, rgba(231, 111, 81, 0.9) 100%),
     url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029') center/cover no-repeat;
   background-blend-mode: overlay;
   position: relative;
@@ -95,7 +95,7 @@
   border: 1px solid rgba(203, 213, 225, 0.9);
   border-radius: 12px;
   padding: 0 14px;
-  background: #fff;
+  background: var(--bg-primary);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -110,8 +110,8 @@ select.form-input {
 }
 
 .form-input:focus {
-  border-color: rgba(99, 102, 241, 0.65);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+  border-color: rgba(29, 53, 87, 0.65);
+  box-shadow: 0 0 0 4px rgba(29, 53, 87, 0.12);
   outline: none;
 }
 

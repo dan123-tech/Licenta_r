@@ -63,20 +63,58 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="admin-dashboard">
       <div className="container">
-        <h1>Panou de Control Admin</h1>
-        
+        <header className="dashboard-header">
+          <h1>Panou de Control Admin</h1>
+          <p>
+            Catalogul este vizibil public fără login. Din acest panou adaugi și actualizezi produsele și
+            stocul — drept rezervat administratorilor.
+          </p>
+        </header>
+
+        <div className="stats-grid" aria-label="Rezumat rapid">
+          <div className="stat-card stat-card-navy">
+            <div className="stat-card-icon" aria-hidden>📦</div>
+            <div className="stat-card-label">Catalog</div>
+            <div className="stat-card-value">Live</div>
+            <div className="stat-card-sub">Vizibil fără autentificare</div>
+          </div>
+          <div className="stat-card stat-card-teal">
+            <div className="stat-card-icon" aria-hidden>🛒</div>
+            <div className="stat-card-label">Închirieri</div>
+            <div className="stat-card-value">Admin</div>
+            <div className="stat-card-sub">Gestionare din panou</div>
+          </div>
+          <div className="stat-card stat-card-terra">
+            <div className="stat-card-icon" aria-hidden>👥</div>
+            <div className="stat-card-label">Utilizatori</div>
+            <div className="stat-card-value">
+              {isSuperOwner ? (isLoadingUsers ? '…' : users.length) : '—'}
+            </div>
+            <div className="stat-card-sub">{isSuperOwner ? 'Înregistrați în sistem' : 'Doar SuperOwner'}</div>
+          </div>
+          <div className="stat-card stat-card-gold">
+            <div className="stat-card-icon" aria-hidden>✨</div>
+            <div className="stat-card-label">Cont</div>
+            <div className="stat-card-value">{currentUser?.username ?? '—'}</div>
+            <div className="stat-card-sub">Sesiune activă</div>
+          </div>
+        </div>
+
         <div className="admin-cards">
-          <Link to={ROUTES.ADMIN_PRODUCTS} className="admin-card">
+          <Link to={ROUTES.ADMIN_PRODUCTS} className="admin-card admin-card-nav">
+            <span className="admin-card-accent" aria-hidden />
             <h2>Gestionare Produse</h2>
             <p>Adaugă, editează sau șterge produse și unități de inventar</p>
           </Link>
           
-          <Link to={ROUTES.ADMIN_RENTALS} className="admin-card">
+          <Link to={ROUTES.ADMIN_RENTALS} className="admin-card admin-card-teal">
+            <span className="admin-card-accent" aria-hidden />
             <h2>Gestionare Închirieri</h2>
             <p>Vizualizează și gestionează toate închirierile</p>
           </Link>
           {isSuperOwner && (
-            <Link to={ROUTES.SUPEROWNER_STATS} className="admin-card">
+            <Link to={ROUTES.SUPEROWNER_STATS} className="admin-card admin-card-gold">
+              <span className="admin-card-accent" aria-hidden />
               <h2>Statistici Financiare</h2>
               <p>Venituri și cheltuieli globale + pe fiecare dispozitiv</p>
             </Link>

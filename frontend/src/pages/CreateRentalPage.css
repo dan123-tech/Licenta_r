@@ -1,5 +1,5 @@
 .create-rental-page {
-  min-height: calc(100vh - 200px);
+  min-height: calc(100vh - var(--header-stack-h, 112px));
   padding: var(--spacing-2xl) 0;
   background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
   position: relative;
@@ -13,8 +13,8 @@
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 85% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+    radial-gradient(circle at 15% 20%, rgba(29, 53, 87, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(42, 157, 143, 0.08) 0%, transparent 40%);
   z-index: 0;
   pointer-events: none;
 }
@@ -69,7 +69,7 @@
   overflow: hidden;
   box-shadow: var(--shadow-lg);
   transition: all var(--transition-base);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(29, 53, 87, 0.2);
   position: relative;
   z-index: 1;
 }
@@ -123,7 +123,7 @@
 .product-category {
   display: inline-block;
   padding: var(--spacing-xs) var(--spacing-md);
-  background: rgba(99, 102, 241, 0.1);
+  background: rgba(29, 53, 87, 0.1);
   color: var(--primary);
   border-radius: var(--border-radius-sm);
   font-size: var(--font-size-xs);
@@ -180,7 +180,7 @@
   padding: var(--spacing-2xl);
   padding-bottom: var(--spacing-3xl);
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(29, 53, 87, 0.2);
   position: relative;
   z-index: 1;
   overflow: visible;
@@ -255,6 +255,8 @@
   background-color: var(--bg-primary);
   color: var(--text-primary);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  line-height: 1.4;
+  min-height: 3.35rem;
 }
 
 .rental-form .form-input:focus,
@@ -262,8 +264,7 @@
 .rental-form textarea.form-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05);
-  transform: translateY(-1px);
+  box-shadow: 0 0 0 4px rgba(29, 53, 87, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .rental-form .form-input:hover:not(:focus),
@@ -401,8 +402,8 @@
   border: none;
   border-radius: var(--border-radius-lg);
   box-shadow: 
-    0 10px 25px -5px rgba(99, 102, 241, 0.4),
-    0 4px 6px -2px rgba(99, 102, 241, 0.2);
+    0 10px 25px -5px rgba(29, 53, 87, 0.4),
+    0 4px 6px -2px rgba(29, 53, 87, 0.2);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: white;
   cursor: pointer;
@@ -433,8 +434,8 @@
 .btn-submit:hover:not(:disabled) {
   transform: translateY(-3px);
   box-shadow: 
-    0 20px 35px -5px rgba(99, 102, 241, 0.5),
-    0 8px 10px -2px rgba(99, 102, 241, 0.3);
+    0 20px 35px -5px rgba(29, 53, 87, 0.5),
+    0 8px 10px -2px rgba(29, 53, 87, 0.3);
   background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary) 100%);
 }
 
@@ -542,7 +543,7 @@
 
 .delivery-option:hover {
   border-color: var(--primary-light);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 4px 12px rgba(29, 53, 87, 0.15);
   transform: translateX(4px);
 }
 
@@ -552,10 +553,10 @@
 
 .delivery-option.active {
   border-color: var(--primary);
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+  background: linear-gradient(135deg, rgba(29, 53, 87, 0.08) 0%, rgba(42, 157, 143, 0.08) 100%);
   box-shadow: 
-    0 4px 12px rgba(99, 102, 241, 0.2),
-    0 0 0 4px rgba(99, 102, 241, 0.05);
+    0 4px 12px rgba(29, 53, 87, 0.2),
+    0 0 0 4px rgba(29, 53, 87, 0.05);
   transform: translateX(0);
 }
 
@@ -621,7 +622,7 @@
 }
 
 .checkbox-label:hover {
-  background: rgba(99, 102, 241, 0.05);
+  background: rgba(29, 53, 87, 0.05);
   border-color: var(--primary-light);
 }
 

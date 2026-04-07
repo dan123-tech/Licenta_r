@@ -67,4 +67,25 @@ public class User {
     @Column(name = "role", length = 50)
     @Builder.Default
     private Set<String> roles = new HashSet<>();
+
+    @Column(name = "address_line1", length = 300)
+    private String addressLine1;
+
+    @Column(name = "address_line2", length = 300)
+    private String addressLine2;
+
+    @Column(length = 120)
+    private String city;
+
+    @Column(name = "postal_code", length = 32)
+    private String postalCode;
+
+    @Column(length = 80)
+    private String country;
+
+    @Column(length = 40)
+    private String phone;
+
+    @Column(name = "billing_full_name", length = 200)
+    private String billingFullName;
 }

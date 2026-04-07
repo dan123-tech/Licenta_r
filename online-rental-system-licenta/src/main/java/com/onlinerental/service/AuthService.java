@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -38,6 +39,10 @@ public class AuthService {
         );
         User user = userRepository.findByUsername(req.username())
                 .orElseThrow(() -> new IllegalArgumentException("Utilizator inexistent"));
+        if (appProperties.isEmailConfirmationRequired() && !user.isVerified()) {
+            throw new IllegalStateException(
+                    "Confirmă adresa de email înainte de autentificare. Verifică mesajul primit la înregistrare.");
+        }
         String token = jwtService.generateToken(user);
         String role = JwtService.primaryRole(user.getRoles());
         return new JwtResponse(token, "Bearer", user.getId(), user.getUsername(), user.getEmail(), role);
@@ -61,7 +66,7 @@ public class AuthService {
         boolean verified = !appProperties.isEmailConfirmationRequired();
         String token = verified ? null : UUID.randomUUID().toString();
         Instant expiry = verified ? null : Instant.now().plus(2, ChronoUnit.DAYS);
-        User user = User.builder()
+        User user = Objects.requireNonNull(User.builder()
                 .username(req.username())
                 .email(req.email())
                 .password(passwordEncoder.encode(req.password()))
@@ -71,7 +76,7 @@ public class AuthService {
                 .verificationToken(token)
                 .tokenExpiry(expiry)
                 .roles(roles)
-                .build();
+                .build());
         userRepository.save(user);
         return ApiResponse.ok("Înregistrare reușită. " + (verified ? "Vă puteți autentifica." : "Verificați email-ul pentru confirmare."));
     }

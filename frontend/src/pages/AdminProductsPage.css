@@ -1,50 +1,53 @@
 .admin-products-page {
-  min-height: calc(100vh - 200px);
-  padding: var(--spacing-2xl) 0;
+  min-height: calc(100vh - var(--header-stack-h, 112px));
+  padding: var(--sp-8) 0 var(--sp-16);
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--spacing-2xl);
+  margin-bottom: var(--sp-6);
   flex-wrap: wrap;
-  gap: var(--spacing-md);
+  gap: var(--sp-3);
 }
 
 .page-header h1 {
   color: var(--text-primary);
-  font-size: var(--font-size-3xl);
-  font-weight: 800;
+  font-size: var(--text-3xl);
+  font-weight: 700;
 }
 
 .products-table {
   background: var(--bg-primary);
-  border-radius: var(--border-radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border-color);
+  border-radius: var(--r-xl);
+  overflow: auto;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
 }
 
 .products-table table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 760px;
 }
 
 .products-table th,
 .products-table td {
-  padding: var(--spacing-lg);
+  padding: var(--sp-4) var(--sp-5);
   text-align: left;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
 }
 
 .products-table th {
   background: var(--bg-secondary);
   font-weight: 700;
-  color: var(--text-primary);
-  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: var(--tracking-wide);
+  white-space: nowrap;
 }
 
 .products-table tr {
@@ -61,24 +64,24 @@
 
 .action-buttons {
   display: flex;
-  gap: var(--spacing-sm);
+  gap: var(--sp-2);
   flex-wrap: wrap;
 }
 
 .empty-state {
-  padding: var(--spacing-3xl);
+  padding: var(--sp-16) var(--sp-6);
   text-align: center;
   color: var(--text-tertiary);
   background: var(--bg-primary);
-  border-radius: var(--border-radius-lg);
-  border: 2px dashed var(--border-color);
+  border-radius: var(--r-2xl);
+  border: 1px dashed var(--border-default);
 }
 
 .empty-state::before {
   content: '📦';
   font-size: 4rem;
   display: block;
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--sp-5);
   opacity: 0.5;
 }
 
@@ -88,7 +91,7 @@
   }
   
   .products-table table {
-    min-width: 600px;
+    min-width: 700px;
   }
   
   .page-header {
@@ -97,6 +100,6 @@
   }
   
   .page-header h1 {
-    font-size: var(--font-size-2xl);
+    font-size: var(--text-2xl);
   }
 }

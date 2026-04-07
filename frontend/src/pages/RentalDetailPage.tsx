@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { rentalService } from '../services/rentalService';
-import { Rental } from '../types';
+import { Rental, RentalReturnWorkflow } from '../types';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { formatDate, formatCurrency } from '../utils/helpers';
 import { RENTAL_STATUSES } from '../utils/constants';
 import { ROUTES } from '../utils/constants';
+import { useAuth } from '../context/AuthContext';
 import './RentalDetailPage.css';
 
 const RentalDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [rental, setRental] = useState<Rental | null>(null);
+  const [workflow, setWorkflow] = useState<RentalReturnWorkflow | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { isSuperOwner } = useAuth();
 
   useEffect(() => {
     if (id) {
@@ -22,8 +25,12 @@ const RentalDetailPage: React.FC = () => {
   const loadRental = async () => {
     try {
       setIsLoading(true);
-      const data = await rentalService.getRentalById(Number(id));
+      const [data, wf] = await Promise.all([
+        rentalService.getRentalById(Number(id)),
+        rentalService.getReturnWorkflow(Number(id)),
+      ]);
       setRental(data);
+      setWorkflow(wf);
     } catch (error) {
       console.error('Error loading rental:', error);
     } finally {
@@ -93,6 +100,14 @@ const RentalDetailPage: React.FC = () => {
               <span className="info-label">Status:</span>
               <span className={`status-badge status-${rental.status.toLowerCase()}`}>
                 {RENTAL_STATUSES[rental.status] || rental.status}
+              </span>
+            </div>
+
+            <div className="info-row">
+              <span className="info-label">Flux retur:</span>
+              <span className="info-value">
+                {workflow?.returnRequested ? 'Solicitare trimisă' : 'Netrimis'}
+                {workflow?.flaggedForReview ? ' · marcat pentru revizuire' : ''}
               </span>
             </div>
             
@@ -217,6 +232,21 @@ const RentalDetailPage: React.FC = () => {
                     </span>
                   </div>
                 )}
+              </>
+            )}
+
+            {!isSuperOwner && (
+              <>
+                <div className="info-section-divider"></div>
+                <h2 className="info-section-title">Poze predare/retur</h2>
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <Link to={`/rentals/${rental.id}/start-photos`} className="btn btn-secondary btn-sm">
+                    Poze de predare
+                  </Link>
+                  <Link to={`/rentals/${rental.id}/return-photos`} className="btn btn-primary btn-sm">
+                    Poze înainte de retur
+                  </Link>
+                </div>
               </>
             )}
           </div>

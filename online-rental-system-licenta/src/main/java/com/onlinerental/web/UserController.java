@@ -21,7 +21,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/users")
-    @PreAuthorize("hasAnyRole('ADMIN','SUPEROWNER')")
+    @PreAuthorize("hasRole('SUPEROWNER')")
     public List<UserResponse> listUsers() {
         return userService.listAll();
     }

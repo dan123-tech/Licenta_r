@@ -22,28 +22,25 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsLoading(false);
   }, []);
 
-  const login = async (username: string, password: string): Promise<void> => {
-    try {
-      const response: JwtResponse = await authService.login({ username, password });
-      
-      const userData: User = {
-        id: response.id,
-        username: response.username,
-        email: response.email,
-        firstName: '', // These aren't in JwtResponse, might need to fetch user details
-        lastName: '',
-        role: response.role,
-        verified: true,
-      };
+  const login = async (username: string, password: string): Promise<JwtResponse> => {
+    const response: JwtResponse = await authService.login({ username, password });
 
-      setToken(response.token);
-      setUser(userData);
-      
-      localStorage.setItem(STORAGE_KEYS.TOKEN, response.token);
-      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userData));
-    } catch (error) {
-      throw error;
-    }
+    const userData: User = {
+      id: response.id,
+      username: response.username,
+      email: response.email,
+      firstName: '',
+      lastName: '',
+      role: response.role,
+      verified: true,
+    };
+
+    setToken(response.token);
+    setUser(userData);
+
+    localStorage.setItem(STORAGE_KEYS.TOKEN, response.token);
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userData));
+    return response;
   };
 
   const register = async (data: RegisterRequest): Promise<void> => {
@@ -65,7 +62,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Check if user has admin or superowner role
   const hasAdminRole = user?.role === 'ROLE_ADMIN' || user?.role === 'ROLE_SUPEROWNER';
   const hasSuperOwnerRole = user?.role === 'ROLE_SUPEROWNER';
-  
+  const vendorAdminOnly = user?.role === 'ROLE_ADMIN';
+  const canEditCatalog =
+    user?.role === 'ROLE_ADMIN' ||
+    user?.role === 'ROLE_SUPEROWNER' ||
+    user?.role === 'ROLE_VENDOR';
+
   const value: AuthContextType = {
     user,
     token,
@@ -75,6 +77,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     isAuthenticated: !!token && !!user,
     isAdmin: hasAdminRole,
     isSuperOwner: hasSuperOwnerRole,
+    isVendorAdminOnly: vendorAdminOnly,
+    canEditCatalog,
     isLoading,
   };
 

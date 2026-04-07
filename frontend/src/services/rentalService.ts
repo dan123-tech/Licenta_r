@@ -1,5 +1,13 @@
 import api from './api';
-import { Rental, RentalRequest, ApiResponse, ConditionCheckRequest } from '../types';
+import {
+  Rental,
+  RentalRequest,
+  ApiResponse,
+  ConditionCheckRequest,
+  RentalPhotoUploadResponse,
+  RentalReturnWorkflow,
+  ReviewReturnDecisionRequest,
+} from '../types';
 
 export const rentalService = {
   createRental: async (rental: RentalRequest): Promise<Rental> => {
@@ -39,6 +47,40 @@ export const rentalService = {
 
   generateAwb: async (id: number): Promise<ApiResponse> => {
     const response = await api.post<ApiResponse>(`/rentals/${id}/generate-awb`);
+    return response.data;
+  },
+
+  uploadBaselinePhoto: async (id: number, file: File): Promise<RentalPhotoUploadResponse> => {
+    const form = new FormData();
+    form.append('file', file);
+    const response = await api.post<RentalPhotoUploadResponse>(`/rentals/${id}/baseline-photos`, form);
+    return response.data;
+  },
+
+  uploadReturnPhoto: async (id: number, file: File): Promise<RentalPhotoUploadResponse> => {
+    const form = new FormData();
+    form.append('file', file);
+    const response = await api.post<RentalPhotoUploadResponse>(`/rentals/${id}/return-photos`, form);
+    return response.data;
+  },
+
+  getReturnWorkflow: async (id: number): Promise<RentalReturnWorkflow> => {
+    const response = await api.get<RentalReturnWorkflow>(`/rentals/${id}/return-workflow`);
+    return response.data;
+  },
+
+  submitReturnRequest: async (id: number): Promise<ApiResponse> => {
+    const response = await api.post<ApiResponse>(`/rentals/${id}/submit-return-request`);
+    return response.data;
+  },
+
+  runAiComparison: async (id: number): Promise<ApiResponse> => {
+    const response = await api.post<ApiResponse>(`/rentals/${id}/run-ai-comparison`);
+    return response.data;
+  },
+
+  reviewReturnDecision: async (id: number, request: ReviewReturnDecisionRequest): Promise<ApiResponse> => {
+    const response = await api.post<ApiResponse>(`/rentals/${id}/review-return`, request);
     return response.data;
   },
 };

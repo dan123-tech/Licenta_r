@@ -1,5 +1,5 @@
 .my-rentals-page {
-  min-height: calc(100vh - 200px);
+  min-height: calc(100vh - var(--header-stack-h, 112px));
   padding: var(--spacing-2xl) 0;
   position: relative;
 }
@@ -11,9 +11,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
-    radial-gradient(circle at 15% 30%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 85% 70%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+  background:
+    radial-gradient(circle at 15% 30%, var(--overlay-blob-primary) 0%, transparent 40%),
+    radial-gradient(circle at 85% 70%, var(--overlay-blob-secondary) 0%, transparent 40%);
   z-index: 0;
   pointer-events: none;
 }
@@ -26,7 +26,7 @@
   text-align: center;
   position: relative;
   z-index: 1;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: var(--gradient-heading);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -74,7 +74,7 @@
   text-decoration: none;
   color: inherit;
   transition: all var(--transition-base);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(29, 53, 87, 0.2);
   position: relative;
   overflow: hidden;
   z-index: 1;

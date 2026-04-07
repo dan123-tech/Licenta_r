@@ -31,12 +31,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .form-header h2 {
   margin: 0;
-  color: #2c3e50;
+  color: var(--text-primary);
   font-size: 1.5rem;
 }
 
@@ -44,7 +44,7 @@
   background: none;
   border: none;
   font-size: 2rem;
-  color: #999;
+  color: var(--text-tertiary);
   cursor: pointer;
   line-height: 1;
   padding: 0;
@@ -58,8 +58,8 @@
 }
 
 .close-btn:hover {
-  background: #f0f0f0;
-  color: #333;
+  background: var(--gray-200);
+  color: var(--text-primary);
 }
 
 .product-form {
@@ -77,7 +77,7 @@
   justify-content: flex-end;
   margin-top: 2rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--border-color);
 }
 
 .form-actions .btn {
@@ -89,7 +89,7 @@
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1rem;
-  border-bottom: 2px solid #eee;
+  border-bottom: 2px solid var(--border-color);
 }
 
 .tab-btn {
@@ -99,19 +99,19 @@
   cursor: pointer;
   font-size: 0.95rem;
   font-weight: 500;
-  color: #666;
+  color: var(--text-secondary);
   border-bottom: 2px solid transparent;
   margin-bottom: -2px;
   transition: all 0.3s ease;
 }
 
 .tab-btn:hover {
-  color: #3498db;
+  color: var(--primary);
 }
 
 .tab-btn.active {
-  color: #3498db;
-  border-bottom-color: #3498db;
+  color: var(--primary);
+  border-bottom-color: var(--primary);
 }
 
 .image-input-section {
@@ -134,26 +134,26 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1.5rem;
-  border: 2px dashed #ddd;
+  border: 2px dashed var(--gray-300);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: #fafafa;
+  background: var(--gray-50);
   text-align: center;
   justify-content: center;
 }
 
 .file-upload-label:hover {
-  border-color: #3498db;
-  background: #f0f8ff;
+  border-color: var(--primary);
+  background: var(--info-light);
 }
 
 .file-upload-label svg {
-  color: #3498db;
+  color: var(--primary);
 }
 
 .file-upload-label span {
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
@@ -169,7 +169,7 @@
   max-width: 300px;
   max-height: 300px;
   border-radius: 8px;
-  border: 2px solid #eee;
+  border: 2px solid var(--border-color);
   object-fit: contain;
 }
 
@@ -181,7 +181,7 @@
   height: 32px;
   border-radius: 50%;
   border: none;
-  background: #e74c3c;
+  background: var(--error);
   color: white;
   font-size: 1.5rem;
   line-height: 1;
@@ -194,7 +194,7 @@
 }
 
 .remove-preview-btn:hover {
-  background: #c0392b;
+  background: #dc2626;
   transform: scale(1.1);
 }
 
@@ -202,12 +202,12 @@
 .form-section-header {
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid var(--gray-200);
 }
 
 .form-section-header h3 {
   margin: 0 0 0.5rem 0;
-  color: #2c3e50;
+  color: var(--text-primary);
   font-size: 1.1rem;
   font-weight: 700;
   display: flex;
@@ -222,7 +222,7 @@
 
 .section-description {
   margin: 0;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   line-height: 1.5;
 }
@@ -235,7 +235,7 @@
 .field-hint {
   font-size: 0.75rem;
   font-weight: 400;
-  color: #999;
+  color: var(--text-tertiary);
   margin-left: 0.5rem;
 }
 
@@ -250,7 +250,7 @@
   left: 0;
   right: 0;
   background: white;
-  border: 1px solid #ddd;
+  border: 1px solid var(--gray-300);
   border-radius: 8px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   z-index: 1000;
@@ -263,8 +263,8 @@
   padding: 0.75rem 1rem;
   cursor: pointer;
   transition: background-color 0.15s ease;
-  border-bottom: 1px solid #f0f0f0;
-  color: #333;
+  border-bottom: 1px solid var(--gray-200);
+  color: var(--text-primary);
 }
 
 .autocomplete-option:last-child {
@@ -272,11 +272,11 @@
 }
 
 .autocomplete-option:hover {
-  background-color: rgba(99, 102, 241, 0.1);
+  background-color: rgba(29, 53, 87, 0.1);
 }
 
 .autocomplete-option:active {
-  background-color: rgba(99, 102, 241, 0.2);
+  background-color: rgba(29, 53, 87, 0.2);
 }
 
 /* Scrollbar for autocomplete */
@@ -285,15 +285,15 @@
 }
 
 .autocomplete-dropdown::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--gray-100);
   border-radius: 3px;
 }
 
 .autocomplete-dropdown::-webkit-scrollbar-thumb {
-  background: #888;
+  background: var(--gray-400);
   border-radius: 3px;
 }
 
 .autocomplete-dropdown::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--gray-600);
 }

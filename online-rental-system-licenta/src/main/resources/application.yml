@@ -31,11 +31,16 @@ app:
   jwt:
     secret: ${JWT_SECRET:dev-secret-must-be-at-least-256-bits-long-for-hs256-algorithm-security-change-me}
     expiration-ms: 86400000
-  frontend-origin: ${APP_FRONTEND_ORIGIN:http://localhost:3000}
+  frontend-origin: ${APP_FRONTEND_ORIGIN:http://localhost:3001}
   uploads-dir: ${APP_UPLOADS_DIR:uploads}
   email-confirmation-required: ${APP_EMAIL_CONFIRMATION_REQUIRED:false}
   stripe:
     secret-key: ${STRIPE_SECRET_KEY:}
+  ai:
+    compare-url: ${APP_AI_COMPARE_URL:}
+    connect-timeout-ms: ${APP_AI_CONNECT_TIMEOUT_MS:4000}
+    read-timeout-ms: ${APP_AI_READ_TIMEOUT_MS:12000}
+    review-threshold: ${APP_AI_REVIEW_THRESHOLD:0.4}
 
 ---
 spring:

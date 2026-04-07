@@ -67,9 +67,9 @@ const MyRentalsPage: React.FC = () => {
                       padding: '0.5rem',
                       borderRadius: '0.5rem',
                       backgroundColor: rental.deliveryType === 'DELIVERY' 
-                        ? 'rgba(99, 102, 241, 0.08)' 
+                        ? 'rgba(29, 53, 87, 0.08)' 
                         : 'rgba(107, 114, 128, 0.08)',
-                      border: `1px solid ${rental.deliveryType === 'DELIVERY' ? 'rgba(99, 102, 241, 0.2)' : 'rgba(107, 114, 128, 0.2)'}`
+                      border: `1px solid ${rental.deliveryType === 'DELIVERY' ? 'rgba(29, 53, 87, 0.2)' : 'rgba(107, 114, 128, 0.2)'}`
                     }}>
                       <div style={{ 
                         display: 'flex', 

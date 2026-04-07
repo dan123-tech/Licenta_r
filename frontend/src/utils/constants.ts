@@ -16,11 +16,14 @@ export const ROUTES = {
   CREATE_RENTAL: '/rentals/create',
   MY_RENTALS: '/rentals/my',
   RENTAL_DETAIL: '/rentals/:id',
+  RENTAL_BASELINE_PHOTOS: '/rentals/:id/start-photos',
+  RENTAL_RETURN_PHOTOS: '/rentals/:id/return-photos',
   ADMIN: '/admin',
   ADMIN_PRODUCTS: '/admin/products',
   ADMIN_RENTALS: '/admin/rentals',
   SUPEROWNER_STATS: '/superowner/statistici',
   PAYMENT: '/payment',
+  ACCOUNT: '/cont',
 } as const;
 
 export const RENTAL_STATUSES: Record<string, string> = {

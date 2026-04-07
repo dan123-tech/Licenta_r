@@ -14,6 +14,34 @@ const HelpPage: React.FC = () => {
         </header>
 
         <section className="help-section">
+          <h2>Conturi și drepturi</h2>
+          <div className="help-cards">
+            <article className="help-card">
+              <h3>Trebuie să mă loghez ca să văd produsele?</h3>
+              <p>
+                Nu. Catalogul și detaliile produselor sunt publice. Contul este necesar pentru a crea
+                închirieri, a vedea „Închirierile mele” și a plăti.
+              </p>
+            </article>
+            <article className="help-card">
+              <h3>Cine poate pune produse „la vânzare” în catalog?</h3>
+              <p>
+                Doar utilizatorii cu rol de <strong>administrator</strong> (și SuperOwner) pot adăuga,
+                edita sau șterge produse și stoc. Clienții și furnizorii înregistrați ca atare nu pot
+                publica produse noi în sistem.
+              </p>
+            </article>
+            <article className="help-card">
+              <h3>După autentificare, unde ajung?</h3>
+              <p>
+                Administratorii sunt redirecționați către panoul <strong>Admin</strong>. Utilizatorii
+                obișnuiți merg la catalogul de produse; de acolo pot începe o închiriere.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section className="help-section">
           <h2>FAQ - Intrebari frecvente</h2>
           <div className="help-cards">
             <article className="help-card">

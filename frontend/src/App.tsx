@@ -17,6 +17,9 @@ import AdminRentalsPage from './pages/AdminRentalsPage';
 import PaymentPage from './pages/PaymentPage';
 import HelpPage from './pages/HelpPage';
 import SuperOwnerStatisticsPage from './pages/SuperOwnerStatisticsPage';
+import AccountPage from './pages/AccountPage';
+import RentalBaselinePhotosPage from './pages/RentalBaselinePhotosPage';
+import RentalReturnPhotosPage from './pages/RentalReturnPhotosPage';
 
 import './App.css';
 
@@ -60,6 +63,22 @@ function App() {
               }
             />
             <Route
+              path="/rentals/:id/start-photos"
+              element={
+                <ProtectedRoute>
+                  <RentalBaselinePhotosPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/rentals/:id/return-photos"
+              element={
+                <ProtectedRoute>
+                  <RentalReturnPhotosPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/payment/:id"
               element={
                 <ProtectedRoute>
@@ -67,12 +86,20 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path={ROUTES.ACCOUNT}
+              element={
+                <ProtectedRoute>
+                  <AccountPage />
+                </ProtectedRoute>
+              }
+            />
 
-            {/* Protected Routes - Admin */}
+            {/* SuperOwner: panou complet. Admin/Vendor: doar produse în catalog */}
             <Route
               path={ROUTES.ADMIN}
               element={
-                <ProtectedRoute requireAdmin>
+                <ProtectedRoute requireSuperOwner>
                   <AdminDashboard />
                 </ProtectedRoute>
               }
@@ -80,7 +107,7 @@ function App() {
             <Route
               path={ROUTES.ADMIN_PRODUCTS}
               element={
-                <ProtectedRoute requireAdmin>
+                <ProtectedRoute requireCatalogEditor>
                   <AdminProductsPage />
                 </ProtectedRoute>
               }
@@ -88,7 +115,7 @@ function App() {
             <Route
               path={ROUTES.ADMIN_RENTALS}
               element={
-                <ProtectedRoute requireAdmin>
+                <ProtectedRoute requireSuperOwner>
                   <AdminRentalsPage />
                 </ProtectedRoute>
               }
