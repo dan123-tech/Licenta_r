@@ -62,100 +62,42 @@ const MyRentalsPage: React.FC = () => {
                   
                   {/* Delivery & AWB Info */}
                   {rental.deliveryType && (
-                    <div style={{ 
-                      marginTop: '0.75rem',
-                      padding: '0.5rem',
-                      borderRadius: '0.5rem',
-                      backgroundColor: rental.deliveryType === 'DELIVERY' 
-                        ? 'rgba(29, 53, 87, 0.08)' 
-                        : 'rgba(107, 114, 128, 0.08)',
-                      border: `1px solid ${rental.deliveryType === 'DELIVERY' ? 'rgba(29, 53, 87, 0.2)' : 'rgba(107, 114, 128, 0.2)'}`
-                    }}>
-                      <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        gap: '0.5rem',
-                        fontSize: '0.875rem',
-                        fontWeight: 600,
-                        color: rental.deliveryType === 'DELIVERY' ? 'var(--primary)' : 'var(--text-secondary)',
-                        marginBottom: rental.awbNumber ? '0.5rem' : '0'
-                      }}>
+                    <div className={`rental-delivery-box rental-delivery-box--${rental.deliveryType === 'DELIVERY' ? 'delivery' : 'pickup'}`}>
+                      <div className={`rental-delivery-header rental-delivery-header--${rental.deliveryType === 'DELIVERY' ? 'delivery' : 'pickup'}`}>
                         <span>{rental.deliveryType === 'DELIVERY' ? '🚚' : '🚶'}</span>
                         <span>{rental.deliveryType === 'DELIVERY' ? 'Livrare la domiciliu' : 'Ridicare personală'}</span>
                       </div>
-                      
+
                       {rental.awbNumber && (
-                        <div style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.5rem',
-                          padding: '0.5rem',
-                          borderRadius: '0.375rem',
-                          backgroundColor: 'var(--success-light)',
-                          border: '2px solid var(--success)',
-                          marginTop: '0.5rem'
-                        }}>
-                          <span style={{ fontSize: '1.125rem' }}>📦</span>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.125rem' }}>
-                            <span style={{ 
-                              fontSize: '0.75rem', 
-                              color: '#065f46',
-                              fontWeight: 600,
-                              textTransform: 'uppercase',
-                              letterSpacing: '0.5px'
-                            }}>
-                              Număr AWB
-                            </span>
-                            <span style={{ 
-                              fontFamily: 'monospace',
-                              fontSize: '0.875rem',
-                              color: '#065f46',
-                              fontWeight: 700,
-                              letterSpacing: '0.05em'
-                            }}>
-                              {rental.awbNumber}
-                            </span>
+                        <div className="rental-awb-box">
+                          <span className="rental-awb-icon">📦</span>
+                          <div className="rental-awb-content">
+                            <span className="rental-awb-label">Număr AWB</span>
+                            <span className="rental-awb-value">{rental.awbNumber}</span>
                           </div>
                         </div>
                       )}
-                      
+
                       {rental.deliveryStatus && (
-                        <div style={{
-                          marginTop: '0.5rem',
-                          fontSize: '0.75rem',
-                          padding: '0.25rem 0.5rem',
-                          borderRadius: '0.25rem',
-                          backgroundColor: rental.deliveryStatus === 'DELIVERED' 
-                            ? 'var(--success-light)' 
-                            : rental.deliveryStatus === 'IN_TRANSIT'
-                            ? 'var(--info-light)'
-                            : 'rgba(107, 114, 128, 0.1)',
-                          color: rental.deliveryStatus === 'DELIVERED'
-                            ? '#065f46'
-                            : rental.deliveryStatus === 'IN_TRANSIT'
-                            ? '#1e40af'
-                            : 'var(--text-secondary)',
-                          fontWeight: 600,
-                          display: 'inline-block'
-                        }}>
+                        <span className={`rental-delivery-status rental-delivery-status--${rental.deliveryStatus.toLowerCase()}`}>
                           {rental.deliveryStatus === 'PENDING' && '⏳ În așteptare'}
                           {rental.deliveryStatus === 'IN_TRANSIT' && '🚚 În tranzit'}
                           {rental.deliveryStatus === 'DELIVERED' && '✅ Livrat'}
                           {rental.deliveryStatus === 'RETURNED' && '↩️ Returnat'}
-                        </div>
+                        </span>
                       )}
                     </div>
                   )}
-                  
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+
+                  <div className="rental-financial-row">
                     <p className="rental-price">{formatCurrency(rental.totalPrice)}</p>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                    <p className="rental-deposit">
                       Depozit: {formatCurrency(rental.depositAmount)}
                       {rental.depositReturned && (
-                        <span style={{ color: 'var(--success)', marginLeft: '0.5rem' }}>✓ Returnat</span>
+                        <span className="rental-deposit-returned">✓ Returnat</span>
                       )}
                       {rental.itemCondition === 'DAMAGED' && !rental.depositReturned && (
-                        <span style={{ color: 'var(--error)', marginLeft: '0.5rem' }}>✗ Reținut</span>
+                        <span className="rental-deposit-kept">✗ Reținut</span>
                       )}
                     </p>
                   </div>

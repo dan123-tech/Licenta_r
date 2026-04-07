@@ -18,3 +18,8 @@ Aplicație web pentru închirierea de produse, cu:
 - Frontend: `http://localhost:3001`
 - Backend: `http://localhost:8081/api/v1`
 
+## Stocare imagini (pe scurt)
+- Imaginile uploadate sunt stocate pe backend în `/app/uploads/images`.
+- Persistența este asigurată prin volumul Docker `rental_uploads`.
+- Imaginile sunt servite public prin ruta `/images/**`.
+

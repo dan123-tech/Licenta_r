@@ -142,6 +142,17 @@ public class RentalController {
         return rentalService.runAiComparison(id, u);
     }
 
+    @PostMapping("/{id}/run-handover-verification")
+    @PreAuthorize("isAuthenticated()")
+    public ApiResponse runHandoverVerification(
+            @PathVariable Long id,
+            @RequestParam String stage,
+            @AuthenticationPrincipal UserDetails principal
+    ) {
+        User u = userRepository.findByUsername(principal.getUsername()).orElseThrow();
+        return rentalService.runHandoverVerification(id, stage, u);
+    }
+
     @PostMapping("/{id}/review-return")
     @PreAuthorize("hasRole('SUPEROWNER')")
     public ApiResponse reviewReturn(

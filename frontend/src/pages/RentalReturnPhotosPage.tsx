@@ -14,6 +14,7 @@ const RentalReturnPhotosPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -76,11 +77,30 @@ const RentalReturnPhotosPage: React.FC = () => {
     }
   };
 
+  const handleRunVerification = async () => {
+    try {
+      setIsVerifying(true);
+      setMessage('');
+      setError('');
+      const resp = await rentalService.runHandoverVerification(rentalId, 'RETURN');
+      setMessage(resp.message || 'Verificare AI retur finalizată.');
+      await loadData();
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Eroare la rularea AI.');
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
   if (isLoading) return <LoadingSpinner />;
   if (error && !rental) return <div className="error-message">{error}</div>;
 
   const minPhotos = workflow?.minRequiredReturnPhotos ?? 3;
   const uploaded = workflow?.returnPhotoCount ?? 0;
+  const baselineUploaded = workflow?.baselinePhotoCount ?? 0;
+  const hasStep1 = baselineUploaded > 0;
+  const hasStep2 = uploaded >= minPhotos;
+  const canRunAi = hasStep1 && hasStep2;
   const canSubmit = uploaded >= minPhotos && !workflow?.returnRequested;
 
   return (
@@ -89,6 +109,28 @@ const RentalReturnPhotosPage: React.FC = () => {
         <div className="return-photos-header">
           <h1>Poze înainte de retur</h1>
           <p>Încarcă minim {minPhotos} imagini, apoi trimite solicitarea de retur.</p>
+          <div className="header-stepper" aria-label="Pași retur">
+            <div className={`header-step ${hasStep1 ? 'is-done' : 'is-active'}`}>
+              <span className="step-index">1</span>
+              <span className="step-label">Încarcă poze primite</span>
+            </div>
+            <div className={`header-step ${hasStep2 ? 'is-done' : 'is-active'}`}>
+              <span className="step-index">2</span>
+              <span className="step-label">Încarcă poze predare</span>
+            </div>
+            <div className={`header-step ${canRunAi ? 'is-active' : ''}`}>
+              <span className="step-index">3</span>
+              <span className="step-label">Rulează AI</span>
+            </div>
+            <div className={`header-step ${workflow?.returnRequested ? 'is-done' : ''}`}>
+              <span className="step-index">4</span>
+              <span className="step-label">Trimite retur</span>
+            </div>
+            <div className={`header-step ${workflow?.returnRequested ? 'is-active' : ''}`}>
+              <span className="step-index">5</span>
+              <span className="step-label">Review SuperOwner</span>
+            </div>
+          </div>
           <div className="return-photos-actions">
             <Link to={`/rentals/${rentalId}`} className="btn btn-secondary btn-sm">
               Înapoi la închiriere
@@ -119,6 +161,14 @@ const RentalReturnPhotosPage: React.FC = () => {
           <div className="submit-row">
             <button
               type="button"
+              className="btn btn-outline"
+              disabled={!canRunAi || isVerifying}
+              onClick={() => void handleRunVerification()}
+            >
+              {isVerifying ? 'Rulează AI...' : 'Rulează verificare AI'}
+            </button>
+            <button
+              type="button"
               className="btn btn-primary"
               disabled={!canSubmit || isSubmitting}
               onClick={() => void handleSubmitReturn()}
@@ -132,9 +182,27 @@ const RentalReturnPhotosPage: React.FC = () => {
 
           {message && <div className="message success">{message}</div>}
           {error && <div className="message error">{error}</div>}
+          {!canRunAi && (
+            <div className="message info">
+              Rulează AI devine disponibil la pasul 3, după ce ai poze la pașii 1 și 2.
+            </div>
+          )}
+
+          {workflow?.latestVerification && (
+            <div className="verification-panel">
+              <h3>Raport AI retur</h3>
+              <p>
+                Verdict: <strong>{workflow.latestVerification.verdict}</strong> · Deteriorare nouă:{' '}
+                <strong>{workflow.latestVerification.newDamageScore?.toFixed(3) ?? 'n/a'}</strong>
+              </p>
+              <p>
+                OCR: {workflow.latestVerification.ocrText ? workflow.latestVerification.ocrText.slice(0, 140) : 'n/a'}
+              </p>
+            </div>
+          )}
 
           <div className="images-grid">
-            {workflow?.returnPhotos.map((img) => (
+            {(workflow?.returnPhotos ?? []).map((img) => (
               <a key={img.id} href={getImageUrl(img.imageUrl)} target="_blank" rel="noreferrer" className="img-tile">
                 <img src={getImageUrl(img.imageUrl)} alt="Poză de retur" />
               </a>

@@ -13,6 +13,7 @@ const RentalBaselinePhotosPage: React.FC = () => {
   const [workflow, setWorkflow] = useState<RentalReturnWorkflow | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -62,6 +63,21 @@ const RentalBaselinePhotosPage: React.FC = () => {
     }
   };
 
+  const runVerification = async () => {
+    try {
+      setIsVerifying(true);
+      setMessage('');
+      setError('');
+      const resp = await rentalService.runHandoverVerification(rentalId, 'BASELINE');
+      setMessage(resp.message || 'Verificare AI finalizată pentru predare.');
+      await loadData();
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Eroare la verificarea AI.');
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
   if (isLoading) return <LoadingSpinner />;
   if (error && !rental) return <div className="error-message">{error}</div>;
 
@@ -84,6 +100,11 @@ const RentalBaselinePhotosPage: React.FC = () => {
         </div>
 
         <section className="return-card">
+          <div className="wizard-steps">
+            <span className="wizard-step is-active">1. Upload poze</span>
+            <span className="wizard-step">2. Rulează AI</span>
+            <span className="wizard-step">3. Rezultat</span>
+          </div>
           <h2>{rental?.productName || rental?.inventoryUnit?.product?.name || 'Produs'}</h2>
           <p className="return-card-sub">
             Poze baseline încărcate: <strong>{workflow?.baselinePhotoCount ?? 0}</strong>
@@ -100,8 +121,33 @@ const RentalBaselinePhotosPage: React.FC = () => {
             <span>{isUploading ? 'Se încarcă...' : 'Alege poze de predare'}</span>
           </label>
 
+          <div className="submit-row">
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={isVerifying || (workflow?.baselinePhotoCount ?? 0) === 0}
+              onClick={() => void runVerification()}
+            >
+              {isVerifying ? 'Rulează AI...' : 'Rulează verificare predare'}
+            </button>
+          </div>
+
           {message && <div className="message success">{message}</div>}
           {error && <div className="message error">{error}</div>}
+
+          {workflow?.latestVerification && (
+            <div className="verification-panel">
+              <h3>Rezultat AI predare</h3>
+              <p>
+                Verdict: <strong>{workflow.latestVerification.verdict}</strong> · Model match:{' '}
+                <strong>{workflow.latestVerification.modelMatchScore?.toFixed(3) ?? 'n/a'}</strong>
+              </p>
+              <p>
+                Power on: <strong>{String(workflow.latestVerification.powerOnDetected ?? false)}</strong> · Error code:{' '}
+                <strong>{String(workflow.latestVerification.errorCodesDetected ?? false)}</strong>
+              </p>
+            </div>
+          )}
 
           <div className="images-grid">
             {workflow?.baselinePhotos.map((img) => (

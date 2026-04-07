@@ -26,18 +26,38 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  mail:
+    host: ${SPRING_MAIL_HOST:}
+    port: ${SPRING_MAIL_PORT:587}
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
+    debug: ${SPRING_MAIL_DEBUG:false}
+    properties:
+      mail:
+        smtp:
+          auth: ${SPRING_MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: ${SPRING_MAIL_SMTP_STARTTLS_ENABLE:true}
+            required: ${SPRING_MAIL_SMTP_STARTTLS_REQUIRED:true}
+          ssl:
+            trust: ${SPRING_MAIL_SMTP_SSL_TRUST:}
+            protocols: ${SPRING_MAIL_SMTP_SSL_PROTOCOLS:TLSv1.2}
 
 app:
   jwt:
     secret: ${JWT_SECRET:dev-secret-must-be-at-least-256-bits-long-for-hs256-algorithm-security-change-me}
     expiration-ms: 86400000
   frontend-origin: ${APP_FRONTEND_ORIGIN:http://localhost:3001}
+  public-base-url: ${APP_PUBLIC_BASE_URL:http://localhost:8081}
   uploads-dir: ${APP_UPLOADS_DIR:uploads}
   email-confirmation-required: ${APP_EMAIL_CONFIRMATION_REQUIRED:false}
+  mail:
+    from: ${APP_MAIL_FROM:noreply@online-rental.local}
   stripe:
     secret-key: ${STRIPE_SECRET_KEY:}
   ai:
     compare-url: ${APP_AI_COMPARE_URL:}
+    image-base-url: ${APP_AI_IMAGE_BASE_URL:}
     connect-timeout-ms: ${APP_AI_CONNECT_TIMEOUT_MS:4000}
     read-timeout-ms: ${APP_AI_READ_TIMEOUT_MS:12000}
     review-threshold: ${APP_AI_REVIEW_THRESHOLD:0.4}

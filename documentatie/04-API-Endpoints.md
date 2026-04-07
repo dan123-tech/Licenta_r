@@ -11,6 +11,10 @@ Prefix: `/api/v1`
 - `GET /products`
 - `GET /products/{id}`
 - `GET /products/filters/...` (folosit de mega-menu)
+- `GET /products` suportă și filtre AI metadata:
+  - `weightMin`, `weightMax`
+  - `thicknessMin`, `thicknessMax`
+  - `color`, `search`
 
 ## Rentals (client)
 - `POST /rentals`
@@ -33,5 +37,9 @@ Prefix: `/api/v1`
 - `GET /rentals/{id}/return-workflow`
 - `POST /rentals/{id}/submit-return-request`
 - `POST /rentals/{id}/run-ai-comparison` (SuperOwner)
+- `POST /rentals/{id}/run-handover-verification?stage=BASELINE|RETURN` (authenticated)
 - `POST /rentals/{id}/review-return` (SuperOwner, body: `{ condition, notes?, markCompleted }`)
+
+## Products (AI metadata write)
+- `POST /products/{id}/ai-tagging` (Vendor/Admin/SuperOwner, body: `{ imageUrls, searchHint? }`)
 

@@ -13,6 +13,13 @@ public record ProductDto(
         String model,
         String imageUrl,
         BigDecimal discountPercent,
+        String aiTags,
+        BigDecimal weightKg,
+        BigDecimal thicknessMm,
+        String colorDetected,
+        String detectedBrand,
+        String detectedModel,
+        BigDecimal modelConfidence,
         Instant createdAt,
         Instant updatedAt
 ) {

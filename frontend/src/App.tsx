@@ -16,6 +16,10 @@ import AdminProductsPage from './pages/AdminProductsPage';
 import AdminRentalsPage from './pages/AdminRentalsPage';
 import PaymentPage from './pages/PaymentPage';
 import HelpPage from './pages/HelpPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsAndConditionsPage from './pages/TermsAndConditionsPage';
+import SupportPage from './pages/SupportPage';
+import CookiePreferencesPage from './pages/CookiePreferencesPage';
 import SuperOwnerStatisticsPage from './pages/SuperOwnerStatisticsPage';
 import AccountPage from './pages/AccountPage';
 import RentalBaselinePhotosPage from './pages/RentalBaselinePhotosPage';
@@ -35,6 +39,10 @@ function App() {
             <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
             <Route path={ROUTES.PRODUCTS} element={<ProductsPage />} />
             <Route path={ROUTES.HELP} element={<HelpPage />} />
+            <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicyPage />} />
+            <Route path={ROUTES.TERMS_AND_CONDITIONS} element={<TermsAndConditionsPage />} />
+            <Route path={ROUTES.SUPPORT} element={<SupportPage />} />
+            <Route path={ROUTES.COOKIE_PREFERENCES} element={<CookiePreferencesPage />} />
             <Route path="/products/:id" element={<ProductDetailPage />} />
 
             {/* Protected Routes - Client */}

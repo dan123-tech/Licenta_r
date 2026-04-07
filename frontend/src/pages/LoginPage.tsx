@@ -43,13 +43,7 @@ const LoginPage: React.FC = () => {
       <div className="login-container">
         <div className="auth-header">
           <div className="auth-logo" aria-hidden>
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M20 12V22H4V12" />
-              <path d="M22 7H2v5h20V7z" />
-              <path d="M12 22V7" />
-              <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
-              <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
-            </svg>
+            <img src="/logo-stacked.svg" alt="Online Rental System" className="auth-logo-img" draggable={false} />
           </div>
           <p className="auth-kicker">Bine ai revenit</p>
           <h2>Autentificare</h2>
@@ -62,13 +56,13 @@ const LoginPage: React.FC = () => {
           {error && <div className="form-error">{error}</div>}
           
           <div className="form-group">
-            <label className="form-label">Username</label>
+            <label className="form-label">Username sau email</label>
             <input
               type="text"
               className="form-input"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Introdu username-ul tau"
+              placeholder="Introdu username-ul sau emailul"
               required
             />
           </div>

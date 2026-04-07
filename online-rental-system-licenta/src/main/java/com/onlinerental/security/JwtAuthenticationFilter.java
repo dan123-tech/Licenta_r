@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
@@ -39,9 +41,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         try {
-            String username = jwtService.extractUsername(token);
+            var claims = jwtService.parseClaims(token);
+            String username = claims.getSubject();
+            Object uidValue = claims.get("uid");
+            Long userId = null;
+            if (uidValue instanceof Number n) {
+                userId = n.longValue();
+            } else if (uidValue instanceof String s && !s.isBlank()) {
+                userId = Long.valueOf(s);
+            }
+
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UserDetails userDetails = userId != null
+                        ? userDetailsService.loadUserById(userId)
+                        : userDetailsService.loadUserByJwtSubject(username);
                 var auth = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
@@ -50,8 +63,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
-        } catch (Exception ignored) {
-            // leave unauthenticated
+        } catch (Exception ex) {
+            log.warn("JWT authentication failed: {}", ex.getMessage());
         }
         filterChain.doFilter(request, response);
     }

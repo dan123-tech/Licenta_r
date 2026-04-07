@@ -13,8 +13,10 @@ public class AppProperties {
 
     private final Jwt jwt = new Jwt();
     private String frontendOrigin = "http://localhost:3001";
+    private String publicBaseUrl = "http://localhost:8081";
     private String uploadsDir = "uploads";
     private boolean emailConfirmationRequired = false;
+    private final Mail mail = new Mail();
     private final Stripe stripe = new Stripe();
     private final Ai ai = new Ai();
 
@@ -33,8 +35,15 @@ public class AppProperties {
 
     @Getter
     @Setter
+    public static class Mail {
+        private String from = "noreply@online-rental.local";
+    }
+
+    @Getter
+    @Setter
     public static class Ai {
         private String compareUrl = "";
+        private String imageBaseUrl = "";
         private int connectTimeoutMs = 4000;
         private int readTimeoutMs = 12000;
         private double reviewThreshold = 0.4;

@@ -64,6 +64,45 @@
   padding: 0 var(--sp-4);
 }
 
+.smart-filter-bar {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-5);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-xl);
+  padding: var(--sp-3) var(--sp-4);
+  box-shadow: var(--shadow-sm);
+  align-items: center;
+}
+
+.smart-filter-bar input {
+  border: 1.5px solid var(--border-default);
+  border-radius: var(--r-lg);
+  padding: 0.55rem 0.85rem;
+  font-size: var(--text-sm);
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  transition: border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
+  outline: none;
+}
+
+.smart-filter-bar input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.smart-filter-bar input:focus {
+  border-color: var(--c1);
+  background: var(--bg-primary);
+  box-shadow: 0 0 0 3px rgba(29, 53, 87, 0.1);
+}
+
+.smart-filter-bar .btn {
+  white-space: nowrap;
+}
+
 /* ─── RESULTS INFO ───────────────────────────────────────────────── */
 .results-info {
   margin-bottom: var(--sp-5);
@@ -492,10 +531,44 @@
   text-align: center;
   padding: var(--sp-16) var(--sp-6);
   color: var(--text-tertiary);
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   background: var(--bg-primary);
-  border: 1px dashed var(--border-default);
+  border: 1.5px dashed var(--border-default);
   border-radius: var(--r-2xl);
+  position: relative;
+}
+
+.no-products::before {
+  content: '🏠';
+  display: block;
+  font-size: 3rem;
+  margin-bottom: var(--sp-4);
+  opacity: 0.5;
+  line-height: 1;
+}
+
+.no-products-filtered {
+  text-align: center;
+  padding: var(--sp-12) var(--sp-6);
+  background: var(--bg-primary);
+  border: 1.5px dashed var(--border-default);
+  border-radius: var(--r-2xl);
+}
+
+.no-products-filtered::before {
+  content: '🔍';
+  display: block;
+  font-size: 2.5rem;
+  margin-bottom: var(--sp-3);
+  opacity: 0.5;
+  line-height: 1;
+}
+
+.no-products-filtered p {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  margin: 0;
+  font-weight: 500;
 }
 
 .error-message {
@@ -517,6 +590,9 @@
 }
 
 @media (max-width: 640px) {
+  .smart-filter-bar {
+    grid-template-columns: 1fr;
+  }
   .products-grid {
     grid-template-columns: 1fr 1fr;
     gap: var(--sp-3);

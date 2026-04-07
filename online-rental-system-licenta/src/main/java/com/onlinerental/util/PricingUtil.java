@@ -28,10 +28,10 @@ public final class PricingUtil {
         BigDecimal afterProduct = subtotal.subtract(productDiscountAmount);
 
         BigDecimal durationRate = BigDecimal.ZERO;
-        if (days >= 14) {
+        if (days > 30) {
+            durationRate = new BigDecimal("0.20");
+        } else if (days > 7) {
             durationRate = new BigDecimal("0.10");
-        } else if (days >= 7) {
-            durationRate = new BigDecimal("0.05");
         }
         BigDecimal durationDiscount = afterProduct.multiply(durationRate).setScale(2, RoundingMode.HALF_UP);
         return afterProduct.subtract(durationDiscount).setScale(2, RoundingMode.HALF_UP);

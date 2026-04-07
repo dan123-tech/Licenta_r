@@ -34,7 +34,10 @@ public class PaymentController {
 
     @PostMapping("/confirm/{paymentIntentId}")
     @PreAuthorize("isAuthenticated()")
-    public ApiResponse confirm(@PathVariable String paymentIntentId) throws StripeException {
-        return paymentService.confirm(paymentIntentId);
+    public ApiResponse confirm(
+            @PathVariable String paymentIntentId,
+            @AuthenticationPrincipal UserDetails principal
+    ) throws StripeException {
+        return paymentService.confirm(paymentIntentId, principal.getUsername());
     }
 }

@@ -28,6 +28,9 @@ const ProductsPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [smartSearch, setSmartSearch] = useState('');
+  const [colorFilter, setColorFilter] = useState('');
+  const [weightMaxFilter, setWeightMaxFilter] = useState('');
 
   const filters = useMemo(() => parseProductFiltersFromSearchParams(searchParams), [searchParams]);
 
@@ -52,19 +55,17 @@ const ProductsPage: React.FC = () => {
       setIsLoading(true);
       setError('');
       const f = parseProductFiltersFromSearchParams(searchParams);
-      const data = await productService.getAllProducts();
+      const data = await productService.getAllProducts({
+        category: f.categories[0],
+        brand: f.brands[0],
+        model: f.models[0],
+        search: smartSearch || f.search || undefined,
+        color: colorFilter || searchParams.get('color') || undefined,
+        weightMax: Number.isFinite(Number(weightMaxFilter)) && weightMaxFilter !== '' ? Number(weightMaxFilter) : undefined,
+      });
 
       const normalizedSearch = (f.search || '').trim().toLowerCase();
       const filtered = data.filter((product) => {
-        if (f.categories.length && !f.categories.includes(product.category)) {
-          return false;
-        }
-        if (f.brands.length && (!product.brand || !f.brands.includes(product.brand))) {
-          return false;
-        }
-        if (f.models.length && (!product.model || !f.models.includes(product.model))) {
-          return false;
-        }
         if (
           normalizedSearch &&
           !`${product.name} ${product.description} ${product.brand || ''} ${product.model || ''}`
@@ -128,13 +129,39 @@ const ProductsPage: React.FC = () => {
 
         <div className="products-layout products-layout-full">
           <main className="products-content products-content-full">
-            {hasActiveFilters && (
+            <section className="smart-filter-bar">
+              <input
+                type="text"
+                placeholder="Caută natural: ex. laptop subțire negru"
+                value={smartSearch}
+                onChange={(e) => setSmartSearch(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Culoare (ex: black, silver)"
+                value={colorFilter}
+                onChange={(e) => setColorFilter(e.target.value)}
+              />
+              <input
+                type="number"
+                min="0"
+                step="0.1"
+                placeholder="Greutate max (kg)"
+                value={weightMaxFilter}
+                onChange={(e) => setWeightMaxFilter(e.target.value)}
+              />
+              <button type="button" className="btn btn-secondary btn-sm" onClick={() => void loadProducts()}>
+                Aplică AI Filters
+              </button>
+            </section>
+            {hasActiveFilters && products.length > 0 && (
               <div className="results-info">
-                <p>
-                  {products.length === 0
-                    ? 'Nu s-au găsit produse pentru filtrele selectate'
-                    : `Găsite ${products.length} ${products.length === 1 ? 'produs' : 'produse'}`}
-                </p>
+                <p>{`Găsite ${products.length} ${products.length === 1 ? 'produs' : 'produse'}`}</p>
+              </div>
+            )}
+            {hasActiveFilters && products.length === 0 && (
+              <div className="no-products-filtered">
+                <p>Nu s-au găsit produse pentru filtrele selectate.</p>
               </div>
             )}
 

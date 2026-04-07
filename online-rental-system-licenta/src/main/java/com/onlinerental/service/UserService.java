@@ -95,6 +95,14 @@ public class UserService {
         return ApiResponse.ok("Utilizator promovat super owner.");
     }
 
+    @Transactional
+    public ApiResponse deleteOwnAccount(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Utilizator inexistent"));
+        userRepository.delete(user);
+        return ApiResponse.ok("Contul tău a fost șters definitiv.");
+    }
+
     private UserResponse toResponse(User u) {
         return new UserResponse(
                 u.getId(),

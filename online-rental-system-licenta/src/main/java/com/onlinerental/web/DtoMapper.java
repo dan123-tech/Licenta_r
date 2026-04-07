@@ -26,6 +26,13 @@ public final class DtoMapper {
                 p.getModel(),
                 p.getImageUrl(),
                 p.getDiscountPercent(),
+                p.getAiTags(),
+                p.getWeightKg(),
+                p.getThicknessMm(),
+                p.getColorDetected(),
+                p.getDetectedBrand(),
+                p.getDetectedModel(),
+                p.getModelConfidence(),
                 p.getCreatedAt(),
                 p.getUpdatedAt()
         );

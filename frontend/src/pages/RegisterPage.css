@@ -50,6 +50,20 @@
   margin-bottom: var(--spacing-xl);
 }
 
+.auth-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--sp-5);
+}
+
+.auth-logo-img {
+  width: 140px;
+  height: auto;
+  display: block;
+  user-select: none;
+}
+
 .auth-kicker {
   margin: 0 0 var(--spacing-xs);
   color: var(--primary);

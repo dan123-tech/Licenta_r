@@ -2,18 +2,25 @@ package com.onlinerental.service;
 
 import com.onlinerental.domain.DeliveryStatus;
 import com.onlinerental.domain.DeliveryType;
+import com.onlinerental.domain.HandoverSessionStatus;
+import com.onlinerental.domain.HandoverStage;
 import com.onlinerental.domain.InventoryStatus;
 import com.onlinerental.domain.InventoryUnit;
 import com.onlinerental.domain.ItemCondition;
 import com.onlinerental.domain.RentalAiComparison;
 import com.onlinerental.domain.RentalBaselineImage;
+import com.onlinerental.domain.RentalHandoverSession;
+import com.onlinerental.domain.RentalPhotoVerification;
 import com.onlinerental.domain.Rental;
 import com.onlinerental.domain.RentalReturnImage;
 import com.onlinerental.domain.RentalStatus;
 import com.onlinerental.domain.User;
+import com.onlinerental.domain.VerificationVerdict;
 import com.onlinerental.repository.RentalAiComparisonRepository;
 import com.onlinerental.repository.RentalBaselineImageRepository;
 import com.onlinerental.repository.InventoryUnitRepository;
+import com.onlinerental.repository.RentalHandoverSessionRepository;
+import com.onlinerental.repository.RentalPhotoVerificationRepository;
 import com.onlinerental.repository.RentalRepository;
 import com.onlinerental.repository.RentalReturnImageRepository;
 import com.onlinerental.repository.UserRepository;
@@ -25,6 +32,7 @@ import com.onlinerental.web.dto.RentalAiComparisonDto;
 import com.onlinerental.web.dto.RentalDto;
 import com.onlinerental.web.dto.RentalImageDto;
 import com.onlinerental.web.dto.RentalPhotoUploadDto;
+import com.onlinerental.web.dto.RentalPhotoVerificationDto;
 import com.onlinerental.web.dto.RentalRequest;
 import com.onlinerental.web.dto.RentalReturnWorkflowDto;
 import com.onlinerental.web.dto.ReviewReturnDecisionRequest;
@@ -55,8 +63,11 @@ public class RentalService {
     private final RentalBaselineImageRepository baselineImageRepository;
     private final RentalReturnImageRepository returnImageRepository;
     private final RentalAiComparisonRepository aiComparisonRepository;
+    private final RentalHandoverSessionRepository handoverSessionRepository;
+    private final RentalPhotoVerificationRepository photoVerificationRepository;
     private final FileStorageService fileStorageService;
     private final AiComparisonService aiComparisonService;
+    private final EmailService emailService;
 
     @Transactional
     public RentalDto create(RentalRequest req, String username) {
@@ -105,6 +116,7 @@ public class RentalService {
         inv.setStatus(InventoryStatus.ON_RENTAL);
         inv.setUpdatedAt(java.time.Instant.now());
         inventoryUnitRepository.save(inv);
+        emailService.sendReservationCreatedEmail(user, saved);
         return loadDto(saved.getId(), user, false);
     }
 
@@ -210,6 +222,7 @@ public class RentalService {
                 .uploadedBy(actor)
                 .imageUrl(imageUrl)
                 .build()));
+        markStageSessionStarted(rental, HandoverStage.BASELINE, actor);
         return new RentalPhotoUploadDto(true, "Poză de predare încărcată.", imageUrl);
     }
 
@@ -227,6 +240,7 @@ public class RentalService {
                 .uploadedBy(actor)
                 .imageUrl(imageUrl)
                 .build()));
+        markStageSessionStarted(rental, HandoverStage.RETURN, actor);
         return new RentalPhotoUploadDto(true, "Poză pentru retur încărcată.", imageUrl);
     }
 
@@ -239,6 +253,8 @@ public class RentalService {
         List<RentalBaselineImage> baseline = baselineImageRepository.findByRentalIdOrderByCreatedAtDesc(rentalId);
         List<RentalReturnImage> returns = returnImageRepository.findByRentalIdOrderByCreatedAtDesc(rentalId);
         RentalAiComparison latest = aiComparisonRepository.findFirstByRentalIdOrderByCreatedAtDesc(rentalId).orElse(null);
+        RentalPhotoVerification latestVerification = photoVerificationRepository
+                .findTopByRentalIdOrderByCreatedAtDesc(rentalId).orElse(null);
 
         return new RentalReturnWorkflowDto(
                 MIN_RETURN_PHOTOS,
@@ -251,7 +267,8 @@ public class RentalService {
                 rental.getAiLastRunAt(),
                 baseline.stream().map(this::toImageDto).toList(),
                 returns.stream().map(this::toImageDto).toList(),
-                latest != null ? toAiDto(latest) : null
+                latest != null ? toAiDto(latest) : null,
+                latestVerification != null ? toVerificationDto(latestVerification) : null
         );
     }
 
@@ -314,11 +331,74 @@ public class RentalService {
                 .message(result.message())
                 .rawResponse(result.rawResponse())
                 .build()));
+        photoVerificationRepository.save(Objects.requireNonNull(RentalPhotoVerification.builder()
+                .rental(rental)
+                .stage(HandoverStage.RETURN)
+                .triggeredBy(actor)
+                .damageScore(result.score())
+                .newDamageScore(result.newDamageScore())
+                .modelMatchScore(result.modelMatchScore())
+                .ocrText(result.ocrText())
+                .powerOnDetected(result.powerOnDetected())
+                .errorCodesDetected(result.errorCodesDetected())
+                .errorCodes(result.errorCodes())
+                .detectedBrand(result.detectedBrand())
+                .detectedModel(result.detectedModel())
+                .serialNumberDetected(result.serialNumberDetected())
+                .verdict(resolveVerdict(result))
+                .needsReview(result.needsReview())
+                .message(result.message())
+                .rawResponse(result.rawResponse())
+                .build()));
 
         rental.setAiLastRunAt(Instant.now());
         rental.setAiComparisonScore(result.score());
         rental.setAiPredictedCondition(result.predictedCondition());
         rental.setFlaggedForReview(result.needsReview());
+        completeLatestStageSession(rental, HandoverStage.RETURN, actor);
+        return ApiResponse.ok(result.message());
+    }
+
+    @Transactional
+    public ApiResponse runHandoverVerification(Long rentalId, String stageValue, User actor) {
+        HandoverStage stage = HandoverStage.valueOf(stageValue.trim().toUpperCase(Locale.ROOT));
+        Rental rental = rentalRepository.findByIdWithDetails(rentalId)
+                .orElseThrow(() -> new IllegalArgumentException("Închiriere inexistentă"));
+        ensureCanAccessRental(rental, actor);
+
+        List<String> baselineUrls = baselineImageRepository.findByRentalIdOrderByCreatedAtDesc(rentalId)
+                .stream()
+                .map(RentalBaselineImage::getImageUrl)
+                .toList();
+        List<String> targetUrls = (stage == HandoverStage.BASELINE
+                ? baselineImageRepository.findByRentalIdOrderByCreatedAtDesc(rentalId).stream().map(RentalBaselineImage::getImageUrl).toList()
+                : returnImageRepository.findByRentalIdOrderByCreatedAtDesc(rentalId).stream().map(RentalReturnImage::getImageUrl).toList());
+
+        if (targetUrls.isEmpty()) {
+            throw new IllegalArgumentException("Nu există poze pentru etapa " + stage.name() + ".");
+        }
+        markStageSessionStarted(rental, stage, actor);
+        AiComparisonService.AiCompareResult result = aiComparisonService.compare(rentalId, baselineUrls, targetUrls);
+        photoVerificationRepository.save(Objects.requireNonNull(RentalPhotoVerification.builder()
+                .rental(rental)
+                .stage(stage)
+                .triggeredBy(actor)
+                .damageScore(result.score())
+                .newDamageScore(result.newDamageScore())
+                .modelMatchScore(result.modelMatchScore())
+                .ocrText(result.ocrText())
+                .powerOnDetected(result.powerOnDetected())
+                .errorCodesDetected(result.errorCodesDetected())
+                .errorCodes(result.errorCodes())
+                .detectedBrand(result.detectedBrand())
+                .detectedModel(result.detectedModel())
+                .serialNumberDetected(result.serialNumberDetected())
+                .verdict(resolveVerdict(result))
+                .needsReview(result.needsReview())
+                .message(result.message())
+                .rawResponse(result.rawResponse())
+                .build()));
+        completeLatestStageSession(rental, stage, actor);
         return ApiResponse.ok(result.message());
     }
 
@@ -416,6 +496,58 @@ public class RentalService {
         );
     }
 
+    private RentalPhotoVerificationDto toVerificationDto(RentalPhotoVerification verification) {
+        return new RentalPhotoVerificationDto(
+                verification.getId(),
+                verification.getStage().name(),
+                verification.getDamageScore(),
+                verification.getNewDamageScore(),
+                verification.getModelMatchScore(),
+                verification.getOcrText(),
+                verification.getPowerOnDetected(),
+                verification.getErrorCodesDetected(),
+                verification.getErrorCodes(),
+                verification.getDetectedBrand(),
+                verification.getDetectedModel(),
+                verification.getSerialNumberDetected(),
+                verification.getVerdict().name(),
+                verification.isNeedsReview(),
+                verification.getMessage(),
+                verification.getCreatedAt()
+        );
+    }
+
+    private void markStageSessionStarted(Rental rental, HandoverStage stage, User actor) {
+        if (handoverSessionRepository.findTopByRentalIdAndStageOrderByStartedAtDesc(rental.getId(), stage).isPresent()) {
+            return;
+        }
+        handoverSessionRepository.save(Objects.requireNonNull(RentalHandoverSession.builder()
+                .rental(rental)
+                .stage(stage)
+                .status(HandoverSessionStatus.PENDING)
+                .startedBy(actor)
+                .build()));
+    }
+
+    private void completeLatestStageSession(Rental rental, HandoverStage stage, User actor) {
+        handoverSessionRepository.findTopByRentalIdAndStageOrderByStartedAtDesc(rental.getId(), stage)
+                .ifPresent(session -> {
+                    session.setStatus(HandoverSessionStatus.COMPLETED);
+                    session.setCompletedBy(actor);
+                    session.setCompletedAt(Instant.now());
+                });
+    }
+
+    private VerificationVerdict resolveVerdict(AiComparisonService.AiCompareResult result) {
+        if ("FAILED".equalsIgnoreCase(result.status())) {
+            return VerificationVerdict.FAILED;
+        }
+        if (result.modelMatchScore() != null && result.modelMatchScore().compareTo(BigDecimal.valueOf(0.55)) < 0) {
+            return VerificationVerdict.MISMATCH;
+        }
+        return result.needsReview() ? VerificationVerdict.REVIEW_REQUIRED : VerificationVerdict.MATCH;
+    }
+
     private void releaseInventoryIfDone(Rental r, RentalStatus st) {
         if (st == RentalStatus.COMPLETED || st == RentalStatus.CANCELED || st == RentalStatus.RETURNED) {
             freeInventory(r);
@@ -438,6 +570,14 @@ public class RentalService {
     public Rental requireRentalByPaymentIntent(String paymentIntentId) {
         return rentalRepository.findByStripePaymentIntentId(paymentIntentId)
                 .orElseThrow(() -> new IllegalArgumentException("Plată necunoscută"));
+    }
+
+    public Rental requireRentalByPaymentIntentForUser(String paymentIntentId, String username) {
+        Rental rental = requireRentalByPaymentIntent(paymentIntentId);
+        if (!rental.getUser().getUsername().equals(username)) {
+            throw new IllegalStateException("Nu poți accesa plata altui utilizator.");
+        }
+        return rental;
     }
 
     @Transactional

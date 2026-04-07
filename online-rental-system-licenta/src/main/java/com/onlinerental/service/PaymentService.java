@@ -24,6 +24,8 @@ public class PaymentService {
 
     private final AppProperties appProperties;
     private final RentalService rentalService;
+    private final InvoiceService invoiceService;
+    private final EmailService emailService;
 
     @PostConstruct
     void stripeKey() {
@@ -57,7 +59,7 @@ public class PaymentService {
     }
 
     @Transactional
-    public ApiResponse confirm(String paymentIntentId) throws StripeException {
+    public ApiResponse confirm(String paymentIntentId, String username) throws StripeException {
         if (appProperties.getStripe().getSecretKey() == null || appProperties.getStripe().getSecretKey().isBlank()) {
             throw new IllegalStateException("Stripe nu este configurat.");
         }
@@ -65,7 +67,13 @@ public class PaymentService {
         if (!"succeeded".equalsIgnoreCase(pi.getStatus())) {
             return ApiResponse.fail("Plata nu este finalizată.");
         }
+        Rental rental = rentalService.requireRentalByPaymentIntentForUser(paymentIntentId, username);
         rentalService.confirmPaid(paymentIntentId);
-        return ApiResponse.ok("Plată confirmată.");
+        byte[] pdf = invoiceService.generateInvoicePdf(rental, paymentIntentId);
+        boolean invoiceSent = emailService.sendPaymentInvoiceEmail(rental.getUser(), rental, paymentIntentId, pdf);
+        if (invoiceSent) {
+            return ApiResponse.ok("Plată confirmată. Factura a fost trimisă pe email.");
+        }
+        return ApiResponse.ok("Plată confirmată. Factura nu a putut fi trimisă automat, te rog contactează suport.");
     }
 }

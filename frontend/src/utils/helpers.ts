@@ -38,12 +38,12 @@ export const calculateTotalPrice = (dailyPrice: number, days: number, productDis
   const priceAfterProductDiscount = subtotal - productDiscountAmount;
   
   // Apply duration-based discount on the price after product discount
-  // 7+ days: 5% discount, 14+ days: 10% discount
+  // >7 days: 10% discount, >30 days: 20% discount
   let durationDiscountPercent = 0;
-  if (days >= 14) {
-    durationDiscountPercent = 0.10; // 10% discount
-  } else if (days >= 7) {
-    durationDiscountPercent = 0.05; // 5% discount
+  if (days > 30) {
+    durationDiscountPercent = 0.20;
+  } else if (days > 7) {
+    durationDiscountPercent = 0.10;
   }
   
   const durationDiscountAmount = priceAfterProductDiscount * durationDiscountPercent;
@@ -66,12 +66,12 @@ export const calculateDiscount = (dailyPrice: number, days: number, productDisco
     : 0;
   const priceAfterProductDiscount = subtotal - productDiscountAmount;
   
-  // Duration discount
+  // Duration discount: >7 days = 10%, >30 days = 20%
   let durationDiscountPercent = 0;
-  if (days >= 14) {
-    durationDiscountPercent = 0.10; // 10% discount
-  } else if (days >= 7) {
-    durationDiscountPercent = 0.05; // 5% discount
+  if (days > 30) {
+    durationDiscountPercent = 0.20;
+  } else if (days > 7) {
+    durationDiscountPercent = 0.10;
   }
   
   const durationDiscountAmount = priceAfterProductDiscount * durationDiscountPercent;

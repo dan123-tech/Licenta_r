@@ -15,6 +15,7 @@ public record RentalReturnWorkflowDto(
         Instant aiLastRunAt,
         List<RentalImageDto> baselinePhotos,
         List<RentalImageDto> returnPhotos,
-        RentalAiComparisonDto latestComparison
+        RentalAiComparisonDto latestComparison,
+        RentalPhotoVerificationDto latestVerification
 ) {
 }

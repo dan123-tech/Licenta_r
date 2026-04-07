@@ -64,9 +64,12 @@ const RegisterPage: React.FC = () => {
     <div className="register-page">
       <div className="register-container">
         <div className="auth-header">
+          <div className="auth-logo" aria-hidden>
+            <img src="/logo-stacked.svg" alt="Online Rental System" className="auth-logo-img" draggable={false} />
+          </div>
           <p className="auth-kicker">Cont nou</p>
           <h2>Înregistrare</h2>
-          <p className="auth-subtitle">Completeaza datele de mai jos pentru a crea un cont.</p>
+          <p className="auth-subtitle">Completează datele de mai jos pentru a crea un cont.</p>
         </div>
         <form onSubmit={handleSubmit} className="register-form">
           {error && <div className="form-error">{error}</div>}

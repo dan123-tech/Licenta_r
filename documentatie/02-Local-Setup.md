@@ -31,3 +31,15 @@ docker compose down
 docker compose --profile local-db down -v
 ```
 
+## 6) Unde sunt stocate imaginile
+- **În container (backend):** `/app/uploads/images`
+- **Persistență Docker:** volumul `rental_uploads` (mapat pe `/app/uploads`)
+- **Expunere HTTP:** backend servește fișierele prin `/images/**`
+  - exemplu: `http://localhost:8081/images/<fisier>`
+- **În baza de date:**
+  - `products.image_url` pentru imaginile produselor
+  - `rental_baseline_images.image_url` pentru poze de predare
+  - `rental_return_images.image_url` pentru poze înainte de retur
+
+Notă: pentru pozele încărcate de utilizator se salvează de regulă căi relative (`/images/...`), iar frontend le afișează folosind host-ul backend.
+

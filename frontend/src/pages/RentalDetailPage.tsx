@@ -49,7 +49,7 @@ const RentalDetailPage: React.FC = () => {
   return (
     <div className="rental-detail-page">
       <div className="container">
-        <Link to={ROUTES.MY_RENTALS} className="back-link">← Înapoi la închirieri</Link>
+        <Link to={ROUTES.MY_RENTALS} className="back-link">Înapoi la închirieri</Link>
         
         <div className="rental-detail-card">
           <h1>Detalii Închiriere</h1>

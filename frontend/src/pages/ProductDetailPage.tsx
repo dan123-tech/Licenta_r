@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { productService } from '../services/productService';
 import { Product, ProductReview, ProductReviewSummary } from '../types';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
-import { formatCurrency } from '../utils/helpers';
+import { formatCurrency, formatDate } from '../utils/helpers';
 import { getImageUrl } from '../utils/imageHelper';
 import { useAuth } from '../context/AuthContext';
 import { ROUTES } from '../utils/constants';
@@ -16,9 +16,10 @@ const ProductDetailPage: React.FC = () => {
   const [reviews, setReviews] = useState<ProductReview[]>([]);
   const [reviewSummary, setReviewSummary] = useState<ProductReviewSummary | null>(null);
   const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState('');
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
     if (id) {
@@ -38,6 +39,13 @@ const ProductDetailPage: React.FC = () => {
         ]);
         setReviews(loadedReviews);
         setReviewSummary(loadedSummary);
+        if (isAuthenticated && user) {
+          const ownReview = loadedReviews.find((r) => r.userId === user.id);
+          if (ownReview) {
+            setRating(ownReview.rating);
+            setComment(ownReview.comment || '');
+          }
+        }
       } catch (reviewError) {
         console.error('Error loading reviews:', reviewError);
         setReviews([]);
@@ -51,6 +59,7 @@ const ProductDetailPage: React.FC = () => {
   };
 
   const renderStars = (value: number) => '★'.repeat(value) + '☆'.repeat(5 - value);
+  const ownReview = user ? reviews.find((r) => r.userId === user.id) : undefined;
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,7 +98,7 @@ const ProductDetailPage: React.FC = () => {
   return (
     <div className="product-detail-page">
       <div className="container">
-        <Link to={ROUTES.PRODUCTS} className="back-link">← Înapoi la produse</Link>
+        <Link to={ROUTES.PRODUCTS} className="back-link">Înapoi la produse</Link>
         
         <div className="product-detail">
           <div className="product-detail-image">
@@ -136,17 +145,27 @@ const ProductDetailPage: React.FC = () => {
 
           {isAuthenticated && (
             <form className="review-form" onSubmit={handleSubmitReview}>
-              <label>
-                Rating (1-5 stele)
-                <select value={rating} onChange={(e) => setRating(Number(e.target.value))}>
-                  <option value={0}>Selecteaza</option>
-                  <option value={1}>1</option>
-                  <option value={2}>2</option>
-                  <option value={3}>3</option>
-                  <option value={4}>4</option>
-                  <option value={5}>5</option>
-                </select>
-              </label>
+              <label>Rating (1-5 stele)</label>
+              <div className="rating-input" role="radiogroup" aria-label="Selectează numărul de stele">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    className={`star-btn ${(hoverRating || rating) >= star ? 'is-active' : ''}`}
+                    onClick={() => setRating(star)}
+                    onMouseEnter={() => setHoverRating(star)}
+                    onMouseLeave={() => setHoverRating(0)}
+                    aria-label={`${star} stele`}
+                    aria-checked={rating === star}
+                    role="radio"
+                  >
+                    ★
+                  </button>
+                ))}
+                <span className="rating-input-value">
+                  {rating > 0 ? `${rating}/5` : 'Selectează rating'}
+                </span>
+              </div>
               <label>
                 Comentariu
                 <textarea
@@ -156,7 +175,7 @@ const ProductDetailPage: React.FC = () => {
                 />
               </label>
               <button className="btn btn-primary" type="submit" disabled={isSubmittingReview || rating === 0}>
-                {isSubmittingReview ? 'Se trimite...' : 'Trimite recenzie'}
+                {isSubmittingReview ? 'Se trimite...' : ownReview ? 'Actualizează recenzie' : 'Trimite recenzie'}
               </button>
             </form>
           )}
@@ -171,6 +190,7 @@ const ProductDetailPage: React.FC = () => {
                     <strong>{review.username}</strong>
                     <span>{renderStars(review.rating)}</span>
                   </div>
+                  <p className="review-date">{formatDate(review.updatedAt || review.createdAt)}</p>
                   {review.comment && <p>{review.comment}</p>}
                 </article>
               ))

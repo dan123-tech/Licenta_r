@@ -22,18 +22,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <nav className="app-nav app-nav-primary" aria-label="Navigare principală">
             <div className="nav-brand">
               <Link to={ROUTES.PRODUCTS}>
-                <div className="nav-brand-logo" aria-hidden>
-                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20 12V22H4V12" />
-                    <path d="M22 7H2v5h20V7z" />
-                    <path d="M12 22V7" />
-                    <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
-                    <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
-                  </svg>
-                </div>
-                <span className="nav-brand-title">
-                  Online <strong>Rental</strong>
-                </span>
+                <img
+                  src="/logo-horizontal.svg"
+                  alt="Online Rental System"
+                  className="nav-brand-img"
+                  draggable={false}
+                />
               </Link>
             </div>
 
@@ -53,8 +47,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               {isAuthenticated ? (
                 <div className="nav-user-block">
                   <span className="nav-user-divider" aria-hidden />
-                  <div className="nav-user-avatar" aria-hidden />
-                  <span className="nav-user-name">{user?.username}</span>
+                  <Link to={ROUTES.ACCOUNT} className="nav-user-profile-link" title="Contul meu">
+                    <div className="nav-user-avatar" aria-hidden />
+                    <span className="nav-user-name">{user?.username}</span>
+                  </Link>
                   <button type="button" onClick={logout} className="btn-nav-logout">
                     Deconectare
                   </button>
@@ -120,29 +116,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       <footer className="app-footer">
         <div className="app-footer-inner">
-              <p className="app-footer-flow">@2026 Online Rental System · powered by Blehoianu-Robert Ionut</p>
+          <Link to={ROUTES.PRODUCTS} className="app-footer-brand">
+            <img src="/logo-horizontal.svg" alt="Online Rental System" className="app-footer-logo" draggable={false} />
+          </Link>
+          <span className="app-footer-sep" aria-hidden>·</span>
+          <p className="app-footer-flow">© 2026 Online Rental System · powered by Blehoianu-Robert Ionut</p>
+          <span className="app-footer-sep" aria-hidden>·</span>
           <nav className="app-footer-links" aria-label="Legături legale și suport">
-            <a href="#" className="app-footer-link">
-              Privacy Policy
-            </a>
-            <span className="app-footer-sep" aria-hidden>
-              ·
-            </span>
-            <a href="#" className="app-footer-link">
-              Terms and Conditions
-            </a>
-            <span className="app-footer-sep" aria-hidden>
-              ·
-            </span>
-            <a href="#" className="app-footer-link">
-              Support
-            </a>
-            <span className="app-footer-sep" aria-hidden>
-              ·
-            </span>
-            <button type="button" className="app-footer-link app-footer-link-btn">
-              Cookie preferences
-            </button>
+            <Link to={ROUTES.PRIVACY_POLICY} className="app-footer-link">Privacy Policy</Link>
+            <span className="app-footer-sep" aria-hidden>·</span>
+            <Link to={ROUTES.TERMS_AND_CONDITIONS} className="app-footer-link">Terms and Conditions</Link>
+            <span className="app-footer-sep" aria-hidden>·</span>
+            <Link to={ROUTES.SUPPORT} className="app-footer-link">Support</Link>
+            <span className="app-footer-sep" aria-hidden>·</span>
+            <Link to={ROUTES.COOKIE_PREFERENCES} className="app-footer-link app-footer-link-btn">Cookie preferences</Link>
           </nav>
         </div>
       </footer>

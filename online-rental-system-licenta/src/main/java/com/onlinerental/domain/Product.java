@@ -60,6 +60,27 @@ public class Product {
     @Builder.Default
     private BigDecimal discountPercent = BigDecimal.ZERO;
 
+    @Column(name = "ai_tags", columnDefinition = "TEXT")
+    private String aiTags;
+
+    @Column(name = "weight_kg", precision = 8, scale = 3)
+    private BigDecimal weightKg;
+
+    @Column(name = "thickness_mm", precision = 8, scale = 2)
+    private BigDecimal thicknessMm;
+
+    @Column(name = "color_detected", length = 128)
+    private String colorDetected;
+
+    @Column(name = "detected_brand", length = 128)
+    private String detectedBrand;
+
+    @Column(name = "detected_model", length = 128)
+    private String detectedModel;
+
+    @Column(name = "model_confidence", precision = 6, scale = 3)
+    private BigDecimal modelConfidence;
+
     @Column(name = "created_at", nullable = false)
     @Builder.Default
     private Instant createdAt = Instant.now();

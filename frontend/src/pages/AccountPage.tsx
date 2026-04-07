@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { profileService } from '../services/profileService';
+import { productService } from '../services/productService';
 import { UserProfile, ProfilePatchPayload } from '../types';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
+import { formatCurrency } from '../utils/helpers';
 import './AccountPage.css';
 
 const emptyProfile: UserProfile = {
@@ -13,17 +15,25 @@ const emptyProfile: UserProfile = {
 };
 
 const AccountPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const canViewProviderDashboard =
+    user?.role === 'ROLE_VENDOR' || user?.role === 'ROLE_ADMIN' || user?.role === 'ROLE_SUPEROWNER';
   const [profile, setProfile] = useState<UserProfile>(emptyProfile);
+  const [provider, setProvider] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [message, setMessage] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
 
   const load = async () => {
     try {
       setLoading(true);
-      const p = await profileService.getProfile();
+      const [p, providerStats] = await Promise.all([
+        profileService.getProfile(),
+        canViewProviderDashboard ? productService.getProviderDashboard() : Promise.resolve(null),
+      ]);
       setProfile(p);
+      setProvider(providerStats);
     } catch {
       setMessage({ type: 'err', text: 'Nu s-au putut încărca datele contului.' });
     } finally {
@@ -65,6 +75,38 @@ const AccountPage: React.FC = () => {
     }
   };
 
+  const handleExportProfile = () => {
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      profile,
+      providerDashboard: provider,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `account-profile-${profile.username || 'user'}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirmation = window.prompt('Type DELETE to permanently remove your account.');
+    if (confirmation !== 'DELETE') {
+      return;
+    }
+    try {
+      setDeleting(true);
+      const response = await profileService.deleteOwnAccount();
+      setMessage({ type: 'ok', text: response.message || 'Cont șters cu succes.' });
+      logout();
+    } catch (err: any) {
+      setMessage({ type: 'err', text: err.response?.data?.message || 'Ștergerea contului a eșuat.' });
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="account-page">
@@ -90,6 +132,35 @@ const AccountPage: React.FC = () => {
         )}
 
         <form onSubmit={handleSave} className="account-form-grid">
+          {canViewProviderDashboard && provider && (
+            <section className="account-card account-card--wide">
+              <h2>Provider Dashboard</h2>
+              <p className="account-muted">Venituri per dispozitiv și breakdown lunar.</p>
+              <div className="provider-kpis">
+                <div><strong>{formatCurrency(provider.totalIncome || 0)}</strong><span>Total income</span></div>
+                <div><strong>{provider.totalRentals || 0}</strong><span>Total rentals</span></div>
+              </div>
+              <div className="provider-list">
+                {(provider.devices || []).map((d: any) => (
+                  <div key={d.productId} className="provider-row">
+                    <span>{d.productName}</span>
+                    <span>{d.rentalCount} închirieri</span>
+                    <strong>{formatCurrency(d.totalRevenue || 0)}</strong>
+                  </div>
+                ))}
+              </div>
+              <h3 className="provider-subtitle">Breakdown lunar</h3>
+              <div className="provider-list">
+                {(provider.monthly || []).map((m: any) => (
+                  <div key={m.month} className="provider-row">
+                    <span>{m.month}</span>
+                    <span />
+                    <strong>{formatCurrency(m.income || 0)}</strong>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
           <section className="account-card">
             <h2>Date cont</h2>
             <p className="account-muted">Username și email nu pot fi modificate aici.</p>
@@ -213,6 +284,24 @@ const AccountPage: React.FC = () => {
             <div className="account-stripe-note">
               <strong>Adăugare card:</strong> mergi la o rezervare în așteptare și deschide pagina de plată — acolo
               poți introduce datele cardului în siguranță.
+            </div>
+          </section>
+
+          <section className="account-card account-card--wide">
+            <h2>Account Actions</h2>
+            <p className="account-muted">Funcționalități suplimentare pentru controlul complet al contului.</p>
+            <div className="account-actions-row">
+              <button type="button" className="btn btn-secondary" onClick={handleExportProfile}>
+                Exportă datele profilului
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger"
+                disabled={deleting}
+                onClick={() => void handleDeleteAccount()}
+              >
+                {deleting ? 'Se șterge...' : 'Șterge contul meu'}
+              </button>
             </div>
           </section>
 

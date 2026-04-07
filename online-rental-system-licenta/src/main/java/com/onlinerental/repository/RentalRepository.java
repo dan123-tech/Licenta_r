@@ -43,4 +43,14 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
     List<Rental> findByInventoryProductIdAndStatusIn(Long productId, List<RentalStatus> statuses);
 
     java.util.Optional<Rental> findByStripePaymentIntentId(String stripePaymentIntentId);
+
+    @Query("""
+            SELECT r FROM Rental r
+            JOIN FETCH r.user u
+            JOIN FETCH r.inventory i
+            JOIN FETCH i.product p
+            WHERE p.owner = :owner
+            ORDER BY r.createdAt DESC
+            """)
+    List<Rental> findByProductOwnerWithDetails(@Param("owner") User owner);
 }

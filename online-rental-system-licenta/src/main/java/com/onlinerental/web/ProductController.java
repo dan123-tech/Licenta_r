@@ -5,9 +5,11 @@ import com.onlinerental.service.ProductService;
 import com.onlinerental.web.dto.InventoryDto;
 import com.onlinerental.web.dto.InventoryRequest;
 import com.onlinerental.web.dto.ProductDto;
+import com.onlinerental.web.dto.ProductAiTaggingRequest;
 import com.onlinerental.web.dto.ProductRequest;
 import com.onlinerental.web.dto.ProductReviewDto;
 import com.onlinerental.web.dto.ProductReviewSummaryDto;
+import com.onlinerental.web.dto.ProviderDashboardDto;
 import com.onlinerental.web.dto.ReviewUpsertRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -37,9 +40,25 @@ public class ProductController {
     public List<ProductDto> list(
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String brand,
-            @RequestParam(required = false) String model
+            @RequestParam(required = false) String model,
+            @RequestParam(required = false) BigDecimal weightMin,
+            @RequestParam(required = false) BigDecimal weightMax,
+            @RequestParam(required = false) BigDecimal thicknessMin,
+            @RequestParam(required = false) BigDecimal thicknessMax,
+            @RequestParam(required = false) String color,
+            @RequestParam(required = false) String search
     ) {
-        return productService.listFiltered(category, brand, model);
+        return productService.listFiltered(
+                category,
+                brand,
+                model,
+                weightMin,
+                weightMax,
+                thicknessMin,
+                thicknessMax,
+                color,
+                search
+        );
     }
 
     @GetMapping("/filters/categories")
@@ -64,6 +83,12 @@ public class ProductController {
     @PreAuthorize("hasAnyRole('VENDOR','ADMIN','SUPEROWNER')")
     public List<ProductDto> myProducts(@AuthenticationPrincipal UserDetails principal) {
         return productService.myProducts(principal.getUsername());
+    }
+
+    @GetMapping("/provider-dashboard")
+    @PreAuthorize("hasAnyRole('VENDOR','ADMIN','SUPEROWNER')")
+    public ProviderDashboardDto providerDashboard(@AuthenticationPrincipal UserDetails principal) {
+        return productService.providerDashboard(principal.getUsername());
     }
 
     @GetMapping("/{id}")
@@ -125,5 +150,16 @@ public class ProductController {
             @AuthenticationPrincipal UserDetails principal
     ) {
         return productService.upsertReview(productId, req, principal.getUsername());
+    }
+
+    @PostMapping("/{productId}/ai-tagging")
+    @PreAuthorize("hasAnyRole('VENDOR','ADMIN','SUPEROWNER')")
+    public ProductDto aiTagging(
+            @PathVariable Long productId,
+            @RequestBody ProductAiTaggingRequest req,
+            @AuthenticationPrincipal UserDetails principal
+    ) {
+        User actor = productService.requireUser(principal.getUsername());
+        return productService.runAiTagging(productId, req, actor);
     }
 }

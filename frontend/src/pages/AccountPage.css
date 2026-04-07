@@ -136,6 +136,66 @@
   justify-content: flex-end;
 }
 
+.account-actions-row {
+  display: flex;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.btn.btn-danger {
+  background: #b42318;
+  color: #fff;
+}
+
+.btn.btn-danger:hover {
+  background: #912018;
+}
+
+.provider-kpis {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+
+.provider-kpis div {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  padding: var(--sp-3);
+  background: var(--bg-secondary);
+}
+
+.provider-kpis strong {
+  display: block;
+  font-size: var(--text-lg);
+  margin-bottom: 2px;
+}
+
+.provider-kpis span {
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+}
+
+.provider-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.provider-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: var(--sp-2);
+  align-items: center;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: var(--sp-2);
+}
+
+.provider-subtitle {
+  margin: var(--sp-4) 0 var(--sp-2);
+  font-size: var(--text-base);
+}
+
 @media (max-width: 560px) {
   .account-field-row {
     grid-template-columns: 1fr;

@@ -6,14 +6,31 @@ import {
   InventoryRequest,
   ProductReview,
   ProductReviewSummary,
+  ProviderDashboard,
 } from '../types';
 
 export const productService = {
-  getAllProducts: async (filters?: { category?: string; brand?: string; model?: string }): Promise<Product[]> => {
+  getAllProducts: async (filters?: {
+    category?: string;
+    brand?: string;
+    model?: string;
+    weightMin?: number;
+    weightMax?: number;
+    thicknessMin?: number;
+    thicknessMax?: number;
+    color?: string;
+    search?: string;
+  }): Promise<Product[]> => {
     const params = new URLSearchParams();
     if (filters?.category) params.append('category', filters.category);
     if (filters?.brand) params.append('brand', filters.brand);
     if (filters?.model) params.append('model', filters.model);
+    if (filters?.weightMin !== undefined) params.append('weightMin', String(filters.weightMin));
+    if (filters?.weightMax !== undefined) params.append('weightMax', String(filters.weightMax));
+    if (filters?.thicknessMin !== undefined) params.append('thicknessMin', String(filters.thicknessMin));
+    if (filters?.thicknessMax !== undefined) params.append('thicknessMax', String(filters.thicknessMax));
+    if (filters?.color) params.append('color', filters.color);
+    if (filters?.search) params.append('search', filters.search);
     
     const queryString = params.toString();
     const url = queryString ? `/products?${queryString}` : '/products';
@@ -77,6 +94,11 @@ export const productService = {
     return response.data;
   },
 
+  getProviderDashboard: async (): Promise<ProviderDashboard> => {
+    const response = await api.get<ProviderDashboard>('/products/provider-dashboard');
+    return response.data;
+  },
+
   getProductReviews: async (productId: number): Promise<ProductReview[]> => {
     const response = await api.get<ProductReview[]>(`/products/${productId}/reviews`);
     return response.data;
@@ -92,6 +114,14 @@ export const productService = {
     payload: { rating: number; comment?: string }
   ): Promise<ProductReview> => {
     const response = await api.post<ProductReview>(`/products/${productId}/reviews`, payload);
+    return response.data;
+  },
+
+  runAiTagging: async (
+    productId: number,
+    payload: { imageUrls: string[]; searchHint?: string }
+  ): Promise<Product> => {
+    const response = await api.post<Product>(`/products/${productId}/ai-tagging`, payload);
     return response.data;
   },
 };

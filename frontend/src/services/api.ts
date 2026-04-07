@@ -50,7 +50,7 @@ api.interceptors.response.use(
         requestUrl.includes('/auth/login') ||
         requestUrl.includes('/auth/register');
 
-      // Keep user logged in for public catalog requests even if backend returns 401 unexpectedly.
+      // Keep user logged in for public catalog requests or auth attempts.
       if (!isPublicProductRead && !isAuthAttempt) {
         localStorage.removeItem(STORAGE_KEYS.TOKEN);
         localStorage.removeItem(STORAGE_KEYS.USER);

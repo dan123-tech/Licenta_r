@@ -43,6 +43,13 @@ export interface Product {
   model?: string;
   imageUrl?: string;
   discountPercent?: number;
+  aiTags?: string;
+  weightKg?: number;
+  thicknessMm?: number;
+  colorDetected?: string;
+  detectedBrand?: string;
+  detectedModel?: string;
+  modelConfidence?: number;
   createdAt: string;
   updatedAt?: string;
 }
@@ -197,6 +204,26 @@ export interface RentalReturnWorkflow {
   baselinePhotos: RentalImage[];
   returnPhotos: RentalImage[];
   latestComparison?: RentalAiComparison;
+  latestVerification?: RentalPhotoVerification;
+}
+
+export interface RentalPhotoVerification {
+  id: number;
+  stage: 'BASELINE' | 'RETURN';
+  damageScore?: number;
+  newDamageScore?: number;
+  modelMatchScore?: number;
+  ocrText?: string;
+  powerOnDetected?: boolean;
+  errorCodesDetected?: boolean;
+  errorCodes?: string;
+  detectedBrand?: string;
+  detectedModel?: string;
+  serialNumberDetected?: string;
+  verdict: 'MATCH' | 'MISMATCH' | 'REVIEW_REQUIRED' | 'FAILED';
+  needsReview: boolean;
+  message?: string;
+  createdAt: string;
 }
 
 // Payment Types
@@ -236,6 +263,25 @@ export interface SuperOwnerStatistics {
   totalNetProfit: number;
   totalRentals: number;
   products: ProductFinancialStats[];
+}
+
+export interface ProviderDeviceIncomeMetric {
+  productId: number;
+  productName: string;
+  totalRevenue: number;
+  rentalCount: number;
+}
+
+export interface ProviderMonthlyIncome {
+  month: string;
+  income: number;
+}
+
+export interface ProviderDashboard {
+  totalIncome: number;
+  totalRentals: number;
+  devices: ProviderDeviceIncomeMetric[];
+  monthly: ProviderMonthlyIncome[];
 }
 
 // Auth Context Types

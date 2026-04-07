@@ -31,13 +31,15 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final AppProperties appProperties;
+    private final EmailService emailService;
 
     @Transactional
     public JwtResponse login(LoginRequest req) {
+        String identifier = req.username().trim();
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(req.username(), req.password())
+                new UsernamePasswordAuthenticationToken(identifier, req.password())
         );
-        User user = userRepository.findByUsername(req.username())
+        User user = userRepository.findByUsernameIgnoreCaseOrEmailIgnoreCase(identifier, identifier)
                 .orElseThrow(() -> new IllegalArgumentException("Utilizator inexistent"));
         if (appProperties.isEmailConfirmationRequired() && !user.isVerified()) {
             throw new IllegalStateException(
@@ -78,6 +80,9 @@ public class AuthService {
                 .roles(roles)
                 .build());
         userRepository.save(user);
+        if (!verified && token != null) {
+            emailService.sendConfirmationEmail(user, token);
+        }
         return ApiResponse.ok("Înregistrare reușită. " + (verified ? "Vă puteți autentifica." : "Verificați email-ul pentru confirmare."));
     }
 

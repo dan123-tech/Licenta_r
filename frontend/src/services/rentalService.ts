@@ -79,6 +79,11 @@ export const rentalService = {
     return response.data;
   },
 
+  runHandoverVerification: async (id: number, stage: 'BASELINE' | 'RETURN'): Promise<ApiResponse> => {
+    const response = await api.post<ApiResponse>(`/rentals/${id}/run-handover-verification?stage=${stage}`);
+    return response.data;
+  },
+
   reviewReturnDecision: async (id: number, request: ReviewReturnDecisionRequest): Promise<ApiResponse> => {
     const response = await api.post<ApiResponse>(`/rentals/${id}/review-return`, request);
     return response.data;
