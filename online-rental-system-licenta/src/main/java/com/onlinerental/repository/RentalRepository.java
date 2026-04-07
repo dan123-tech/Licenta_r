@@ -33,6 +33,7 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
 
     @Query("""
             SELECT r FROM Rental r
+            JOIN FETCH r.user u
             JOIN FETCH r.inventory i
             JOIN FETCH i.product p
             WHERE r.user = :user AND r.id = :id

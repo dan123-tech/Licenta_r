@@ -120,7 +120,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       <footer className="app-footer">
         <div className="app-footer-inner">
-          <p className="app-footer-flow">2026 Online Rental System · powered by Blehoianu-Robert Ionut</p>
+              <p className="app-footer-flow">@2026 Online Rental System · powered by Blehoianu-Robert Ionut</p>
           <nav className="app-footer-links" aria-label="Legături legale și suport">
             <a href="#" className="app-footer-link">
               Privacy Policy
