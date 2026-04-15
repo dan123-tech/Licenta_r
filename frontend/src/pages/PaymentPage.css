@@ -135,26 +135,26 @@
 .payment-form {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xl);
+  gap: var(--sp-8);
 }
 
 .payment-amount {
   text-align: center;
-  padding: var(--spacing-xl);
+  padding: var(--sp-8);
   background: linear-gradient(135deg, rgba(29, 53, 87, 0.1) 0%, rgba(42, 157, 143, 0.1) 100%);
-  border-radius: var(--border-radius);
+  border-radius: var(--r-lg);
   border: 2px solid var(--border-glass-subtle);
 }
 
 .payment-amount h3 {
-  margin: 0 0 var(--spacing-sm) 0;
+  margin: 0 0 var(--sp-2) 0;
   color: var(--text-secondary);
-  font-size: var(--font-size-sm);
+  font-size: var(--text-sm);
   font-weight: 500;
 }
 
 .amount-display {
-  font-size: var(--font-size-4xl);
+  font-size: var(--text-4xl);
   font-weight: 800;
   background: var(--gradient-heading);
   -webkit-background-clip: text;
@@ -165,23 +165,23 @@
 .card-element-container {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: var(--sp-2);
 }
 
 .card-element-container label {
   font-weight: 600;
   color: var(--text-primary);
-  font-size: var(--font-size-sm);
+  font-size: var(--text-sm);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .card-element-container .StripeElement {
-  padding: var(--spacing-md);
-  border: 2px solid var(--border-color);
-  border-radius: var(--border-radius-sm);
+  padding: var(--sp-4);
+  border: 2px solid var(--border-default);
+  border-radius: var(--r-md);
   background: var(--bg-primary);
-  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  transition: border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
 }
 
 .card-element-container .StripeElement--focus {
@@ -194,23 +194,23 @@
 }
 
 .payment-page .error-message {
-  padding: var(--spacing-md);
-  background: var(--error-light);
+  padding: var(--sp-4);
+  background: var(--error-pale);
   border: 1px solid rgba(239, 68, 68, 0.35);
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--r-md);
   color: #991b1b;
-  font-size: var(--font-size-sm);
+  font-size: var(--text-sm);
 }
 
 .payment-success {
   text-align: center;
-  padding: var(--spacing-3xl) var(--spacing-lg);
+  padding: var(--sp-16) var(--sp-6);
 }
 
 .success-icon {
   width: 80px;
   height: 80px;
-  margin: 0 auto var(--spacing-xl);
+  margin: 0 auto var(--sp-8);
   background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
   border-radius: 50%;
   display: flex;
@@ -224,7 +224,7 @@
 
 .payment-success h2 {
   color: var(--success);
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--sp-4);
 }
 
 .payment-success p {
@@ -233,15 +233,15 @@
 
 .error-container {
   text-align: center;
-  padding: var(--spacing-3xl) var(--spacing-lg);
-  background: var(--error-light);
-  border-radius: var(--border-radius);
+  padding: var(--sp-16) var(--sp-6);
+  background: var(--error-pale);
+  border-radius: var(--r-lg);
   border: 1px solid rgba(239, 68, 68, 0.35);
 }
 
 .error-container h2 {
   color: #991b1b;
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--sp-4);
 }
 
 .error-container p {

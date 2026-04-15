@@ -289,7 +289,10 @@ const AccountPage: React.FC = () => {
 
           <section className="account-card account-card--wide">
             <h2>Account Actions</h2>
-            <p className="account-muted">Funcționalități suplimentare pentru controlul complet al contului.</p>
+            <p className="account-muted">
+              Funcționalități suplimentare pentru controlul complet al contului: poți exporta datele profilului sau
+              poți șterge definitiv contul.
+            </p>
             <div className="account-actions-row">
               <button type="button" className="btn btn-secondary" onClick={handleExportProfile}>
                 Exportă datele profilului

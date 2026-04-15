@@ -64,7 +64,7 @@
   background: var(--bg-primary);
   color: var(--text-primary);
   font-weight: 600;
-  transition: all var(--transition-base);
+  transition: var(--transition-base);
 }
 
 .status-select:focus {
@@ -147,8 +147,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--border-radius-sm);
-  transition: all var(--transition-base);
+  border-radius: var(--r-md);
+  transition: var(--transition-base);
 }
 
 .close-btn:hover {

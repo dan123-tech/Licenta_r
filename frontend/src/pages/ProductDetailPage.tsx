@@ -72,14 +72,15 @@ const ProductDetailPage: React.FC = () => {
         rating,
         comment: comment.trim() || undefined,
       });
-      setComment('');
-      setRating(0);
       const [loadedReviews, loadedSummary] = await Promise.all([
         productService.getProductReviews(product.id),
         productService.getProductReviewSummary(product.id),
       ]);
       setReviews(loadedReviews);
       setReviewSummary(loadedSummary);
+      setRating(0);
+      setHoverRating(0);
+      setComment('');
     } catch (error) {
       console.error('Error submitting review:', error);
     } finally {

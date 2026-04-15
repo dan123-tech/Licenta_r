@@ -1,5 +1,7 @@
 .help-page {
-  padding: var(--spacing-2xl) 0;
+  min-height: calc(100vh - var(--header-stack-h, 112px));
+  padding: var(--sp-10) 0 var(--sp-20);
+  background: var(--bg-canvas);
   position: relative;
 }
 
@@ -17,97 +19,192 @@
 .help-page .container {
   position: relative;
   z-index: 1;
+  max-width: 860px;
 }
 
+/* ─── HERO ────────────────────────────────────────────────────── */
 .help-hero {
-  background: var(--surface-glass);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-glass-subtle);
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-2xl);
-  margin-bottom: var(--spacing-xl);
-  box-shadow: var(--shadow-md);
-  position: relative;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-8);
 }
 
-.help-hero::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+.help-hero-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--r-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--c1-pale);
+  color: var(--c1);
+  flex-shrink: 0;
+}
+
+.help-hero-icon svg {
+  width: 26px;
+  height: 26px;
 }
 
 .help-hero h1 {
-  margin: 0 0 var(--spacing-sm);
-  background: var(--gradient-heading);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 800;
-  font-size: clamp(1.75rem, 4vw, var(--font-size-3xl));
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+  margin: 0 0 var(--sp-2);
 }
 
 .help-hero p {
-  margin: 0;
+  font-size: var(--text-md);
   color: var(--text-secondary);
-  font-size: var(--font-size-base);
+  line-height: var(--leading-relaxed);
+  max-width: 540px;
+  margin: 0;
 }
 
+/* ─── SECTIONS ─────────────────────────────────────────────────── */
 .help-section {
-  background: var(--surface-glass);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border-glass-subtle);
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-xl);
-  margin-bottom: var(--spacing-lg);
-  box-shadow: var(--shadow);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-xl);
+  padding: var(--sp-6);
+  margin-bottom: var(--sp-4);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out);
 }
+
+.help-section:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-default);
+}
+
+.help-section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+
+.help-section-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.help-section-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.help-section-icon--blue  { background: var(--c1-pale); color: var(--c1); }
+.help-section-icon--teal  { background: var(--c2-pale); color: var(--c2); }
+.help-section-icon--coral { background: var(--c3-pale); color: var(--c3); }
+.help-section-icon--gold  { background: var(--c4-pale); color: #9a6e00; }
 
 .help-section h2 {
-  margin: 0 0 var(--spacing-md);
+  font-size: var(--text-lg);
+  font-weight: 600;
   color: var(--text-primary);
-  font-size: var(--font-size-xl);
+  line-height: var(--leading-snug);
+  margin: 0;
 }
 
+/* ─── FAQ CARDS ─────────────────────────────────────────────────── */
 .help-cards {
   display: grid;
-  gap: var(--spacing-md);
+  gap: var(--sp-3);
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
 .help-card {
-  background: linear-gradient(180deg, var(--gray-50) 0%, var(--bg-primary) 100%);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  padding: var(--spacing-md);
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  padding: var(--sp-4);
+  transition: box-shadow var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-spring);
 }
 
 .help-card:hover {
+  box-shadow: var(--shadow-sm);
+  border-color: var(--border-default);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--border-glass-subtle);
 }
 
 .help-card h3 {
-  margin: 0 0 var(--spacing-xs);
-  font-size: var(--font-size-base);
-  color: var(--primary);
+  margin: 0 0 var(--sp-2);
+  font-size: var(--text-base);
+  color: var(--c1);
   font-weight: 700;
+  line-height: var(--leading-snug);
 }
 
 .help-card p {
   margin: 0;
   color: var(--text-secondary);
-  font-size: var(--font-size-sm);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
 }
 
-.help-list {
-  margin: 0;
-  padding-left: 1.1rem;
-  color: var(--text-secondary);
+/* ─── CONTACT LIST ─────────────────────────────────────────────── */
+.help-contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--sp-3);
+}
+
+.help-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+}
+
+.help-contact-item-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.help-contact-item-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.help-contact-item-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+  margin-bottom: var(--sp-1);
+}
+
+.help-contact-item-value {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+@media (max-width: 600px) {
+  .help-hero h1 { font-size: var(--text-2xl); }
+  .help-section  { padding: var(--sp-5); }
+  .help-cards    { grid-template-columns: 1fr; }
+  .help-contact-grid { grid-template-columns: 1fr; }
 }

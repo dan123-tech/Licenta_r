@@ -330,7 +330,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSuccess, onCancel 
           </div>
 
           <div className="form-section-header">
-            <h3>Informații pentru Filtrare *</h3>
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              Informații pentru Filtrare
+            </h3>
             <p className="section-description">
               Aceste câmpuri sunt obligatorii și vor fi folosite pentru filtrarea produselor de către clienți.
             </p>

@@ -157,7 +157,7 @@ const CreateRentalPage: React.FC = () => {
     <div className="create-rental-page">
       <div className="container">
         <Link to={`/products/${product.id}`} className="back-link">
-          <span className="back-icon">←</span> Înapoi la produs
+          Înapoi la produs
         </Link>
 
         <div className="create-rental-layout">

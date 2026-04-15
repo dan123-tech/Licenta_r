@@ -12,7 +12,13 @@ import java.util.Optional;
 
 public interface ProductReviewRepository extends JpaRepository<ProductReview, Long> {
 
-    List<ProductReview> findByProductOrderByCreatedAtDesc(Product product);
+    @Query("""
+            SELECT r FROM ProductReview r
+            JOIN FETCH r.user u
+            WHERE r.product = :product
+            ORDER BY r.createdAt DESC
+            """)
+    List<ProductReview> findByProductOrderByCreatedAtDesc(@Param("product") Product product);
 
     Optional<ProductReview> findByProductAndUser(Product product, User user);
 

@@ -211,6 +211,7 @@ public class ProductService {
         return new ProviderDashboardDto(totalIncome, totalRentals, deviceMetrics, monthlyDtos);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductReviewDto> reviews(Long productId) {
         Product p = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Produs inexistent"));
         return productReviewRepository.findByProductOrderByCreatedAtDesc(p).stream()
